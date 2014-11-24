@@ -5,29 +5,37 @@
  */
 package view;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import utils.CommandSyntaxException;
+
 /**
  * реализация паттерна декоратор
+ *
  * @author dodler
  */
 public class CommandLineProcessor {
-    
-    private enum States{
-        
-    }
-    
+
     IConsoleView console;
-    
-    public CommandLineProcessor(IConsoleView console){
+
+    public CommandLineProcessor(IConsoleView console) {
         this.console = console;
     }
-    
+
+    public static void main(String[] args) {
+        new CommandLineProcessor(null).analyze("delete asd s");
+    }
+
     /**
      * метод для анализа входной строки
-     * @param source 
+     *
+     * @param source
      */
-    private void analyze(String source){
-        for(int i = 0; i<source.length(); i++){
-            
+    private void analyze(String source) {
+        try {
+            new StringProcessor(source).handle();
+        } catch (CommandSyntaxException ex) {
+            Logger.getLogger(CommandLineProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
