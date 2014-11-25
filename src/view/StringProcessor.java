@@ -5,48 +5,47 @@
  */
 package view;
 
-import view.command.FindCommand;
-import view.command.RenameCommand;
-import view.command.ShowCommand;
-import view.command.DeleteCommand;
+import java.util.ArrayList;
 import view.command.CommandHandler;
-import view.command.AddCommand;
-import utils.CommandSyntaxException;
+import view.command.exception.CommandSyntaxException;
 
 /**
  * обработка строки
+ *
  * @author dodler
  */
 public class StringProcessor {
+
     private String source;
     private String[] words;
     private IConsoleView console;
-    
-    public StringProcessor(String source){
+    private ArrayList<CommandHandler> commandList;
+
+    public StringProcessor(String source) {
         this.source = source;
+        commandList = new ArrayList<>();
     }
-    
-    public void setConsole(IConsoleView console){
+
+    public void setConsole(IConsoleView console) {
         this.console = console;
     }
-    
+
     /**
      * обработка слова
-     * @throws utils.CommandSyntaxException
+     *
+     * @throws view.command.exception.CommandSyntaxException
      */
-    public void handle() throws CommandSyntaxException{
-        CommandHandler ch = null;
+    public void handle() throws CommandSyntaxException {
         words = source.split(" "); // получили команды и аргументы
-        switch (words[0]) { 
-            case "add": ch = new AddCommand(words); break;
-            case "delete": ch = new DeleteCommand(words); break;
-            case "rename": ch = new RenameCommand(words);break;
-            case "show": ch = new ShowCommand(words);break;
-            case "find":ch = new FindCommand(words);break;
-            //default: throw new CommandSyntaxException(); break;
+        for (CommandHandler ch : commandList) {
+            try {
+                if (ch.isApplicable(words)) {
+                    ch.handle(words);
+                }
+            } catch (CommandSyntaxException sce) {
+                ch.showCorrectCommandFormat();
+            }
         }
-        ch.setConsole(console);
-        ch.handle();
-        
+
     }
 }

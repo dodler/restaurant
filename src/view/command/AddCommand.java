@@ -5,28 +5,39 @@
  */
 package view.command;
 
-import utils.CommandSyntaxException;
+import view.command.exception.CommandSyntaxException;
 
 /**
  *
  * @author dodler
  */
 public class AddCommand extends CommandHandler{
-
-    public AddCommand(String[] source) {
-        super(source);
-    }
     
     @Override
-    public void handle() throws CommandSyntaxException{
-        if (source.length == 3){
+    public void handle(String[] arg) throws CommandSyntaxException{
+        if (arg.length == 3){
             // добавлениею определенного блюда из категории
-            console.addDish(source[1], source[2]);
-        }else if (source.length == 2){
+            console.addDish(arg[1], arg[2]);
+        }else if (arg.length == 2){
             // удаление блюда по имени с поиском
-            console.addDish(source[1]);
+            console.addDish(arg[1]);
         }else{
             throw new CommandSyntaxException("Неверное число аргументов для команды add");
         }
+    }
+
+    @Override
+    public boolean isApplicable(String[] arg) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void showCorrectCommandFormat() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void showShortName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

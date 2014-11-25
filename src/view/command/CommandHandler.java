@@ -5,24 +5,24 @@
  */
 package view.command;
 
-import utils.CommandSyntaxException;
 import view.IConsoleView;
+import view.command.exception.CommandSyntaxException;
 
 /**
  * класс обработки команд
  * @author dodler
  */
 public abstract class CommandHandler {
-    String[] source;
     IConsoleView console;
     
-    public CommandHandler(String[] source){
-        this.source = source;
+    public CommandHandler(){
     }
     
-    public void setConsole(IConsoleView console){
-        this.console = console;
-    }
+    public abstract void handle(String[] arg) throws CommandSyntaxException;
     
-    public abstract void handle() throws CommandSyntaxException;
+    public abstract boolean isApplicable(String[] arg);
+    
+    public abstract void showCorrectCommandFormat();
+    
+    public abstract void showShortName();
 }

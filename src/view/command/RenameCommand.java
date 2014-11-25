@@ -5,8 +5,7 @@
  */
 package view.command;
 
-import view.command.CommandHandler;
-import utils.CommandSyntaxException;
+import view.command.exception.CommandSyntaxException;
 
 /**
  *
@@ -14,23 +13,39 @@ import utils.CommandSyntaxException;
  */
 public class RenameCommand extends CommandHandler {
 
-    public RenameCommand(String[] source) {
-        super(source);
-    }
-
+    /**
+     *
+     * @param arg
+     * @throws CommandSyntaxException
+     */
     @Override
-    public void handle() throws CommandSyntaxException {
-        switch (source.length) {
+    public void handle(String[] arg) throws CommandSyntaxException {
+        switch (arg.length) {
             case 3: // переименование блюда
-                console.editDishName(source[1], source[2]);
+                console.editDishName(arg[1], arg[2]);
                 break;
             case 4:
-                if (!source[1].equals("-c")) throw new CommandSyntaxException("Неверный аргумент для команды rename");
+                if (!arg[1].equals("-c")) throw new CommandSyntaxException();
                 
-                console.editCategoryName(source[2], source[3]);
+                console.editCategoryName(arg[2], arg[3]);
                 
                 break;
         }
+    }
+
+    @Override
+    public boolean isApplicable(String[] arg) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void showCorrectCommandFormat() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void showShortName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

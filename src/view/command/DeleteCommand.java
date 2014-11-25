@@ -5,8 +5,7 @@
  */
 package view.command;
 
-import view.command.CommandHandler;
-import utils.CommandSyntaxException;
+import view.command.exception.CommandSyntaxException;
 
 /**
  *
@@ -14,29 +13,40 @@ import utils.CommandSyntaxException;
  */
 public class DeleteCommand extends CommandHandler {
 
-    public DeleteCommand(String[] source) {
-        super(source);
-    }
-
     @Override
-    public void handle() throws CommandSyntaxException {
-        if (source.length == 3) {
-            switch (source[1]) {
+    public void handle(String[] arg) throws CommandSyntaxException {
+        if (arg.length == 3) {
+            switch (arg[1]) {
                 case "all":
-                    console.deleteDishCategory(source[2]);
+                    console.deleteDishCategory(arg[2]);
                     break;
                 case "-c":
-                    console.deleteCategory(source[2]);
+                    console.deleteCategory(arg[2]);
                     break;
                 default:
                     throw new CommandSyntaxException("Ошибка ввода команды delete");
             }
-        } else if (source.length == 2) {
-            console.deleteDish(source[1]); // сразу удаление по имени
+        } else if (arg.length == 2) {
+            console.deleteDish(arg[1]); // сразу удаление по имени
         } else {
             throw new CommandSyntaxException("Неверное число аргументов для команды delete");
         }
 
+    }
+
+    @Override
+    public boolean isApplicable(String[] arg) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void showCorrectCommandFormat() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void showShortName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

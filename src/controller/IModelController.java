@@ -5,7 +5,7 @@ import utils.Dish;
 import java.util.ArrayList;
 import model.exceptions.CategoryNotFoundException;
 import model.exceptions.DishNotFoundException;
-import utils.Category;
+import model.Category;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

@@ -7,7 +7,7 @@ package view;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import utils.CommandSyntaxException;
+import view.command.exception.CommandSyntaxException;
 
 /**
  * реализация паттерна декоратор

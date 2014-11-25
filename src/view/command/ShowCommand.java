@@ -5,21 +5,31 @@
  */
 package view.command;
 
-import view.command.CommandHandler;
-import utils.CommandSyntaxException;
+import view.command.exception.CommandSyntaxException;
 
 /**
  *
  * @author dodler
  */
 public class ShowCommand extends CommandHandler{
-
-    public ShowCommand(String[] source){
-        super(source);
-    }
     
     @Override
-    public void handle() throws CommandSyntaxException {
+    public void handle(String[] arg) throws CommandSyntaxException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isApplicable(String[] arg) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void showCorrectCommandFormat() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void showShortName() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
