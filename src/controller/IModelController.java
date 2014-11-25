@@ -1,7 +1,7 @@
 package controller;
 
 
-import utils.Dish;
+import model.Dish;
 import java.util.ArrayList;
 import model.exceptions.CategoryNotFoundException;
 import model.exceptions.DishNotFoundException;

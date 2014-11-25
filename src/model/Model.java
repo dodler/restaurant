@@ -10,7 +10,6 @@
 package model;
 
 import java.util.Locale.Category;
-import utils.MenuCategory;
 
 /**
  *
