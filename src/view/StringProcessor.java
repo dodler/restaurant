@@ -5,6 +5,12 @@
  */
 package view;
 
+import view.command.FindCommand;
+import view.command.RenameCommand;
+import view.command.ShowCommand;
+import view.command.DeleteCommand;
+import view.command.CommandHandler;
+import view.command.AddCommand;
 import utils.CommandSyntaxException;
 
 /**

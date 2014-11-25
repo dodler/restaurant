@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view;
+package view.command;
 
+import view.command.CommandHandler;
 import utils.CommandSyntaxException;
 
 /**
@@ -18,7 +19,7 @@ public class FindCommand extends CommandHandler{
     }
     
     @Override
-    void handle() throws CommandSyntaxException {
+    public void handle() throws CommandSyntaxException {
         
     }
     

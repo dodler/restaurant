@@ -23,7 +23,7 @@ public class CommandLineProcessor {
     }
 
     public static void main(String[] args) {
-        new CommandLineProcessor(null).analyze("delete asd s");
+        new CommandLineProcessor(null).analyze("delete all s");
     }
 
     /**

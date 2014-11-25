@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view;
+package view.command;
 
 import utils.CommandSyntaxException;
+import view.IConsoleView;
 
 /**
  * класс обработки команд
@@ -23,5 +24,5 @@ public abstract class CommandHandler {
         this.console = console;
     }
     
-    abstract void handle() throws CommandSyntaxException;
+    public abstract void handle() throws CommandSyntaxException;
 }
