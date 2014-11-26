@@ -15,12 +15,11 @@ public class AddCommand extends CommandHandler{
     
     @Override
     public void handle(String[] arg) throws CommandSyntaxException{
-        if (arg.length == 3){
+        if (arg.length == 4){
             // добавлениею определенного блюда из категории
-            console.addDish(arg[1], arg[2]);
-        }else if (arg.length == 2){
-            // удаление блюда по имени с поиском
-            console.addDish(arg[1]);
+            controller.addDish(arg[1], arg[2], Double.parseDouble(arg[3]));
+        }else if (arg.length == 3){
+            controller.addDish(arg[1], Double.parseDouble(arg[2]));
         }else{
             throw new CommandSyntaxException("Неверное число аргументов для команды add");
         }
@@ -28,16 +27,19 @@ public class AddCommand extends CommandHandler{
 
     @Override
     public boolean isApplicable(String[] arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (arg[0].equals("add")){
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void showCorrectCommandFormat() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Формат команды: add category name price или add name price, где category - категория, в которую нужно добавить блюдо, а name - имя блюда, price - цена блюда");
     }
 
     @Override
     public void showShortName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Пример. add борщ 12 - добавляет блюдо борщ с ценой 12. ");
     }
 }

@@ -32,7 +32,7 @@ public class Dish {
      * ид выставляет автоматически - хешкод времени
      * @param name - имя еды, желательно тоже уникальное
      */
-    public Dish(final String name) {
+    public Dish(String name) {
         this.id = Objects.hashCode(Calendar.getInstance());
         this.name = name;
     }

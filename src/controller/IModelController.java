@@ -1,12 +1,5 @@
 package controller;
 
-
-import model.Dish;
-import java.util.ArrayList;
-import model.exceptions.CategoryNotFoundException;
-import model.exceptions.DishNotFoundException;
-import model.Category;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -17,69 +10,84 @@ import model.Category;
  * @author dodler
  */
 public interface IModelController {
-
-    /**
-     * метод для поиска определнной категории, имя которой известно
-     * @param name - имя категории
-     * @return - объект, содержащий имя, ид и блюда категории
-     * @throws CategoryNotFoundException  - категория не найдена
-     */
-    Category findCategory(String name) throws CategoryNotFoundException;
     
     /**
-     * метод поиска блюда по имени
+     * вывод всех категорий и блюд с ценами
+     */
+    void showCategoryDishTreePriced();
+
+    /**
+     * вывод дерева категорий и блюд
+     */
+    void showCategoryDishTree();
+
+    /**
+     * вывод всех блюд из категории с ценами
+     */
+    void showDishListPriced(String category);
+
+    /**
+     * вывод блюд категории
+     *
      * @param category
+     */
+    void showDishList(String category);
+
+    /**
+     * удаляет блюдо. будет произведен поиск по всему дереву категорий
+     *
      * @param name - имя блюда
-     * @throws DishNotFoundException - если блюда нет
-     * @return  - объект блюда
      */
-    Dish findDish(String category, String name) throws DishNotFoundException;
-    
-    /**
-     * поиск блюда по одному названию
-     * @param name
-     * @return
-     * @throws DishNotFoundException 
-     */
-    Dish findDish(String name) throws DishNotFoundException;
+    void deleteDish(String name);
 
     /**
-     * добавление списка блюд в определенную категорию
+     * удаляет все блюда в категории но сохраняет категорию
+     *
+     * @param category - категория
+     */
+    void deleteDishCategory(String category);
+
+    /**
+     * удаляет категорию с блюдами целиком
+     *
+     * @param category - категория, которую нужно удалить
+     */
+    void deleteCategory(String category);
+
+    /**
+     * удаляет одно блюдо из категории
+     *
+     * @param category - категория, которая содержит блюдо
+     * @param name - имя блюда
+     */
+    void deleteDish(String category, String name);
+
+    /**
+     * добавляет блюдо в корневую категорию
+     *
+     * @param name - имя блюда
+     */
+    void addDish(String name, double price);
+
+    /**
+     * добавляет блюдо в произвольную категорию
+     *
      * @param category - категория, в которую нужно добавить блюдо
-     * @param nameList - список блюд
-     * @return
-     * @throws Exception 
+     * @param name - имя нового блюда
      */
-    Dish addDish(String category, ArrayList<String> nameList) throws Exception;
+    void addDish(String category, String name, double price);
     
     /**
-     * выдает список блюд в категории
-     * @param category - нужная категория
-     * @return - список блюд соответствующей категории
+     * метод переименования категории
+     * @param oldName - старое имя категории
+     * @param newName - новое имя категории
      */
-    public ArrayList<Dish> getCategoryDishList(Category category) throws CategoryNotFoundException;
+    void editCategoryName(String oldName, String newName);
 
-    
-    /**
-     * удаляет конкретное блюдо
-     * @param name - имя блбда
-     * @throws DishNotFoundException  - блюдо не найдено
-     */
-    void removeDish(String name)  throws DishNotFoundException;
+    void editDishPrice(String name, double newPrice);
 
-    /**
-     * удаляет все блюда из списка
-     * @param category - категория в которой находятся блюда
-     * @param nameList - список блюд, которые надо удалить
-     * @throws Exception 
-     */
-    void removeDish(String category, ArrayList<String> nameList)throws Exception;
-    
-    /**
-     * удаление всех блюд из списка
-     * @param nameList - список блюд к удалению
-     * @throws Exception - если блюдо не найдено
-     */
-    void removeDish(ArrayList<String> nameList) throws Exception;
+    void editDishName(String oldName, String newName);
+
+    void editDishCategory(String oldCategory, String name, String newCategory);
     
 }

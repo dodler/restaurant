@@ -8,7 +8,8 @@ package view.command;
 import view.command.exception.CommandSyntaxException;
 
 /**
- *
+ * по всей видимости это будет поискпо шаблону 
+ * на выходе - полное имя
  * @author dodler
  */
 public class FindCommand extends CommandHandler{
@@ -20,7 +21,10 @@ public class FindCommand extends CommandHandler{
 
     @Override
     public boolean isApplicable(String[] arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (arg[0].equals("find")){
+            return true;
+        }
+        return false;
     }
 
     @Override

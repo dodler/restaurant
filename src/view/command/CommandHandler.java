@@ -5,7 +5,7 @@
  */
 package view.command;
 
-import view.IConsoleView;
+import controller.IModelController;
 import view.command.exception.CommandSyntaxException;
 
 /**
@@ -13,7 +13,7 @@ import view.command.exception.CommandSyntaxException;
  * @author dodler
  */
 public abstract class CommandHandler {
-    IConsoleView console;
+    IModelController controller;
     
     public CommandHandler(){
     }

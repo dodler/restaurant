@@ -22,12 +22,12 @@ public class RenameCommand extends CommandHandler {
     public void handle(String[] arg) throws CommandSyntaxException {
         switch (arg.length) {
             case 3: // переименование блюда
-                console.editDishName(arg[1], arg[2]);
+                controller.editDishName(arg[1], arg[2]);
                 break;
             case 4:
                 if (!arg[1].equals("-c")) throw new CommandSyntaxException();
                 
-                console.editCategoryName(arg[2], arg[3]);
+                controller.editCategoryName(arg[2], arg[3]);
                 
                 break;
         }
@@ -35,17 +35,20 @@ public class RenameCommand extends CommandHandler {
 
     @Override
     public boolean isApplicable(String[] arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (arg[0].equals("rename")){
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void showCorrectCommandFormat() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Формат команды: rename [-c] oldname newname - переименовать заменить имя блюда oldname на newname. \n -c - переименовать категорию");
     }
 
     @Override
     public void showShortName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Пример. rename борщ солянка");
     }
 
 }

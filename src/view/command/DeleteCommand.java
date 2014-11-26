@@ -17,17 +17,17 @@ public class DeleteCommand extends CommandHandler {
     public void handle(String[] arg) throws CommandSyntaxException {
         if (arg.length == 3) {
             switch (arg[1]) {
-                case "all":
-                    console.deleteDishCategory(arg[2]);
+                case "-a":
+                    controller.deleteDishCategory(arg[2]);
                     break;
                 case "-c":
-                    console.deleteCategory(arg[2]);
+                    controller.deleteCategory(arg[2]);
                     break;
                 default:
                     throw new CommandSyntaxException("Ошибка ввода команды delete");
             }
         } else if (arg.length == 2) {
-            console.deleteDish(arg[1]); // сразу удаление по имени
+            controller.deleteDish(arg[1]); // сразу удаление по имени
         } else {
             throw new CommandSyntaxException("Неверное число аргументов для команды delete");
         }
@@ -36,17 +36,20 @@ public class DeleteCommand extends CommandHandler {
 
     @Override
     public boolean isApplicable(String[] arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (arg[0].equals("delete")){
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void showCorrectCommandFormat() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Формат команды: delete [-a|-c] name. -a - удаление всех блюд в категории, -с - удаление категории с именем name со всеми блюдами. Запуск команды без ключей приведет к удалению блюда с именем name. ");
     }
 
     @Override
     public void showShortName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Пример. delete -a горячее - удалить все блюда из категории горячее.");
     }
 
 }
