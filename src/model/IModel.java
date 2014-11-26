@@ -17,10 +17,7 @@ public interface IModel {
     
     Category getRootCategory();
     
-    void addCategory(Category parent);
-    void deleteCategory(Category parent);
-    
     void saveToFile(String name);
-    void loadFromFile();
+    void loadFromFile(String name);
     
 }

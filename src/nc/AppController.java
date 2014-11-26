@@ -5,7 +5,15 @@
 package nc;
 
 import controller.IModelController;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.IModel;
+import model.ModelImpl;
 import view.IConsoleView;
 
 /**
@@ -27,6 +35,26 @@ public class AppController{
      * инициализация контроллера и вьюхи
      */
     private AppController(){
+        
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader("config.txt"));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        ArrayList<String> config = new ArrayList<>();
+        String line = "";
+        try {
+            while((line = br.readLine()) != null){
+            config.add(line); // считали конфиг
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        model = new ModelImpl();
+        model.loadFromFile(config.get(0)); // загружаем базу из файла
         
     }
     
