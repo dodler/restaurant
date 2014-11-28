@@ -9,15 +9,12 @@
  */
 package model;
 
-/**
- *
- * @author dodler
- */
 public interface IModel {
-    
+
     Category getRootCategory();
-    
+
     void saveToFile(String name);
+
     void loadFromFile(String name);
-    
+
 }

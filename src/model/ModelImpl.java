@@ -8,8 +8,9 @@ package model;
  *
  * @author Артем
  */
-public class ModelImpl implements IModel{
+public class ModelImpl implements IModel {
 
+    //TODO: нужно сделать сериализацию, и рут категорию
     @Override
     public Category getRootCategory() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -24,5 +25,5 @@ public class ModelImpl implements IModel{
     public void loadFromFile(String name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author dodler
  */
-public interface Category {
+public interface ICategory {
     
     int getId();
     
@@ -19,7 +19,7 @@ public interface Category {
      * метод для получения доступа к родительскому элементу
      * @return родительская категория
      */
-    Category getParent();
+    ICategory getParent();
     
     /**
      * возвращает имя категории
@@ -31,7 +31,7 @@ public interface Category {
      * добавляет категорию в список дочерних категорий
      * @param c категория, которую нужно добавить в список дочерних категорий
      */
-    void addCategory(Category c);
+    void addCategory(ICategory c);
 
     /**
      * добавляет блюдо в категорию
@@ -49,6 +49,6 @@ public interface Category {
      * метод для доступа к дочерним категориям
      * @return - массив дочерних категорий
      */
-    ArrayList<Category> getSubCategoryList();
+    ArrayList<ICategory> getSubCategoryList();
     
 }

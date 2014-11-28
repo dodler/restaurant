@@ -1,100 +1,60 @@
 package model;
 
-import java.util.Calendar;
-import java.util.Objects;
+import model.exceptions.IncorrectCostException;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
-* убрать поле категории
- */
-/**
- * объекта одной еды контейнер
- *
- * @author dodler
- */
-public class Dish {
+import java.io.Serializable;
+import java.util.UUID;
 
-    private int id; // уникальный ид
-    private String name; // имя. желательно тоже уникальное
-    private double price; // стоимость еды
+public class Dish implements Serializable{
+    private String name;
+    private double cost;
+    private UUID ID;
 
-    /**
-     * пустой конструктор делать не буду не дело пустую еду есть
-     */
-    public Dish() {
-        throw new UnsupportedOperationException("Пустого блюда не существует. Попробуйте придумать, тогда можете убрать исключение");
-    }
-
-    /**
-     * конструктор, который создает готовую еду со всеми параметрами
-     * ид выставляет автоматически - хешкод времени
-     * @param name - имя еды, желательно тоже уникальное
-     */
-    public Dish(String name) {
-        this.id = Objects.hashCode(Calendar.getInstance());
+/* КОНСТРУКТОРЫ */
+    // Конструктор, создающий блюдо с указанным названием и ценой.
+    public Dish(String name, double cost) throws IncorrectCostException{
+        checkCost(cost);
         this.name = name;
+        this.cost = cost;
+        this.ID = UUID.randomUUID();
     }
 
-    /**
-     * конструктор, который создает готовую еду со всеми параметрами
-     *
-     * @param id - уникальный ид, задает ид еды
-     * @param name - имя еды, желательно тоже уникальное
-     * @param price - стоимость еды
-     */
-    public Dish(final int id,
-            final String name,
-            final int price
-    ) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
+    // Конструктор, создающий блюдо с указанным названием и стандартной ценой 100 руб.
+    public Dish(String name) throws IncorrectCostException{
+        this(name, 0);
     }
 
-    /**
-     * возвращает ид
-     *
-     * @return - ид
-     */
-    public int getId() {
-        return this.id;
-    }
-
-    /**
-     * возвращает имя
-     *
-     * @return
-     */
-    public String getName() {
+/* МЕТОДЫ */
+    // Метод получения названия блюда.
+    public String getName(){
         return this.name;
     }
 
-    /**
-     * возвращает цену
-     * @throws Exception - если цену сразу не задали
-     * @return
-     */
-    public double getPrice()  throws Exception{
-        if (price <= 0) {
-            throw new Exception("Цена не задана, приносим извинения");
-        } else {
-            return this.price;
-        }
+    // Метод изменения названия блюда.
+    public void setName(String name){
+        this.name = name;
     }
-    
-    /**
-     * метод задания исключения
-     * @param price - цена блюда
-     * @throws Exception - если цена задана
-     */
-    public void setPrice(double price) throws Exception{
-        if (price <= 0){
-            this.price = price;
-        }else{
-            throw new Exception("Цена уже задана.");
-        }
+
+    // Метод получения цены блюда.
+    public double getCost(){
+        return this.cost;
+    }
+
+    // Метод изменения цены блюда.
+    public void setCost(double cost) throws IncorrectCostException{
+        checkCost(cost);
+        this.cost = cost;
+    }
+
+    // Метод получения ID блюда.
+    public UUID getID(){
+        return this.ID;
+    }
+
+/* ПРИВАТНЫЕ МЕТОДЫ */
+    // Метод проверки правильности цены блюда.
+    private void checkCost(double cost) throws IncorrectCostException{
+           if (cost < 0) throw new IncorrectCostException();
     }
 
 }

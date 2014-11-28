@@ -12,6 +12,12 @@ package view;
  * @author dodler
  */
 public interface IConsoleView {
-
+    /* 
+    show(Category)
+    showWithDishes(Category)
+    show(List<Category>)
+    show(List<Dish>)
+    show(String)
+    */
     
 }

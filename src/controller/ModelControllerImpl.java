@@ -4,7 +4,7 @@
  */
 package controller;
 
-import model.Category;
+import model.ICategory;
 
 /**
  *
@@ -12,7 +12,7 @@ import model.Category;
  */
 public class ModelControllerImpl implements IModelController{
     
-    private Category rootCategory;
+    private ICategory rootCategory;
     
     /**
      * конструктор контроллера
@@ -20,7 +20,7 @@ public class ModelControllerImpl implements IModelController{
      * соответственно до создания контроллера нужно создать модель
      * @param rootCategory - ссылкана рутовую категорию
      */
-    public ModelControllerImpl(Category rootCategory){
+    public ModelControllerImpl(ICategory rootCategory){
         this.rootCategory = rootCategory;
     }
     
