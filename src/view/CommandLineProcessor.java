@@ -60,7 +60,7 @@ public class CommandLineProcessor extends Thread{
             try {
                 input = commandInput.readLine();
                 if (input.equals("exit")){
-                    return;
+                    return; // остановка метода
                 }
                 processor.handle(input);
             } catch (IOException | CommandSyntaxException ex) {
