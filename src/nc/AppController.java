@@ -5,6 +5,7 @@
 package nc;
 
 import controller.IModelController;
+import controller.ModelControllerImpl;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,8 +13,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Dish;
+import model.CategoryImpl;
 import model.IModel;
 import model.ModelImpl;
+import view.CommandLineProcessor;
 import view.IConsoleView;
 
 /**
@@ -36,9 +40,44 @@ public class AppController{
      */
     private AppController(){
         
+        
+        CategoryImpl hd = new CategoryImpl("bla");
+        try {
+            hd.addDish(new Dish("borsch"));
+        } catch (Exception ex) {
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        CategoryImpl hd2 = new CategoryImpl("bla bla");
+        hd.addCategory(hd2);
+        
+        try {
+            hd2.addDish(new Dish("borsch2"));
+            hd2.addDish(new Dish("borsch 2borsch"));
+        } catch (Exception ex) {
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        CategoryImpl hd3 = new CategoryImpl("333");
+        
+        try {
+            hd3.addDish(new Dish("zharkoe"));
+            hd3.addDish(new Dish("asd"));
+            hd3.addDish(new Dish("as2d"));
+            hd3.addDish(new Dish("231222"));
+            hd3.addDish(new Dish("pic'ka"));
+        } catch (Exception ex) {
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        hd2.addCategory(hd3);
+        
+        CommandLineProcessor clp = new CommandLineProcessor(System.in, new ModelControllerImpl(hd));
+        clp.run();
+        
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader("config.txt"));
+            br = new BufferedReader(new FileReader("readme.txt"));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
         }

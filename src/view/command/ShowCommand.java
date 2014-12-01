@@ -5,6 +5,7 @@
  */
 package view.command;
 
+import controller.IModelController;
 import view.command.exception.CommandSyntaxException;
 
 /**
@@ -12,6 +13,10 @@ import view.command.exception.CommandSyntaxException;
  * @author dodler
  */
 public class ShowCommand extends CommandHandler {
+
+    public ShowCommand(IModelController controller) {
+        super(controller);
+    }
 
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
@@ -39,10 +44,7 @@ public class ShowCommand extends CommandHandler {
 
     @Override
     public boolean isApplicable(String[] arg) {
-        if (arg[0].equals("show")) {
-            return true;
-        }
-        return false;
+        return arg[0].equals("show");
     }
 
     @Override

@@ -5,6 +5,7 @@
  */
 package view.command;
 
+import controller.IModelController;
 import view.command.exception.CommandSyntaxException;
 
 /**
@@ -12,6 +13,10 @@ import view.command.exception.CommandSyntaxException;
  * @author dodler
  */
 public class RenameCommand extends CommandHandler {
+
+    public RenameCommand(IModelController controller) {
+        super(controller);
+    }
 
     /**
      *
@@ -35,10 +40,7 @@ public class RenameCommand extends CommandHandler {
 
     @Override
     public boolean isApplicable(String[] arg) {
-        if (arg[0].equals("rename")){
-            return true;
-        }
-        return false;
+        return arg[0].equals("rename");
     }
 
     @Override

@@ -13,9 +13,10 @@ import view.command.exception.CommandSyntaxException;
  * @author dodler
  */
 public abstract class CommandHandler {
-    IModelController controller;
+    protected IModelController controller;
     
-    public CommandHandler(){
+    public CommandHandler(IModelController controller){
+        this.controller = controller;
     }
     
     public abstract void handle(String[] arg) throws CommandSyntaxException;

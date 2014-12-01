@@ -5,6 +5,11 @@
  */
 package view;
 
+import controller.IModelController;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import view.command.exception.CommandSyntaxException;
@@ -14,28 +19,53 @@ import view.command.exception.CommandSyntaxException;
  *
  * @author dodler
  */
-public class CommandLineProcessor {
+public class CommandLineProcessor extends Thread{
 
-    IConsoleView console;
-
-    public CommandLineProcessor(IConsoleView console) {
-        this.console = console;
-    }
-
-    public static void main(String[] args) {
-        new CommandLineProcessor(null).analyze("delete all s");
-    }
-
+    BufferedReader commandInput;
+    
     /**
-     * метод для анализа входной строки
-     *
-     * @param source
+     * конструктор позволяющий задать поток ввода
+     * например консоль или сетевой поток
+     * или поток байт
+     * @param commandInput - поток откуда будут приходить команды
      */
-    private void analyze(String source) {
-        try {
-            new StringProcessor(source).handle();
-        } catch (CommandSyntaxException ex) {
-            Logger.getLogger(CommandLineProcessor.class.getName()).log(Level.SEVERE, null, ex);
+    public CommandLineProcessor(InputStream commandInput) {
+        this.commandInput = new BufferedReader(new InputStreamReader(commandInput));
+        processor = new StringProcessor();
+    }
+    
+    public CommandLineProcessor(InputStream commandInput, IModelController controller){
+        this(commandInput);
+        processor = new StringProcessor(controller);
+    }
+    
+    public void setController(IModelController controller){
+        processor = new StringProcessor(controller);
+    }
+    
+    private StringProcessor processor;
+    
+    /**
+     * констуруктор задающий в качестве входного потока
+     * системный входной поток - консоль то бишь
+     */
+    public CommandLineProcessor(){
+        this.commandInput = new BufferedReader(new InputStreamReader(System.in));
+    }
+    
+    @Override
+    public void run(){
+        String input;
+        while(!isInterrupted()){
+            try {
+                input = commandInput.readLine();
+                if (input.equals("exit")){
+                    return;
+                }
+                processor.handle(input);
+            } catch (IOException | CommandSyntaxException ex) {
+                Logger.getLogger(CommandLineProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }

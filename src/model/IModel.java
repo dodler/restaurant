@@ -11,7 +11,7 @@ package model;
 
 public interface IModel {
 
-    Category getRootCategory();
+    ICategory getRootCategory();
 
     void saveToFile(String name);
 

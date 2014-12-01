@@ -12,7 +12,7 @@ public class ModelImpl implements IModel {
 
     //TODO: нужно сделать сериализацию, и рут категорию
     @Override
-    public Category getRootCategory() {
+    public ICategory getRootCategory() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
