@@ -9,12 +9,16 @@
  */
 package model;
 
-public interface IModel {
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+
+public interface IModel{
 
     ICategory getRootCategory();
 
-    void saveToFile(String name);
+    void saveToFile(String name) throws IOException;
 
-    void loadFromFile(String name);
+    void loadFromFile(String name)  throws ParserConfigurationException, SAXException, IOException ;
 
 }

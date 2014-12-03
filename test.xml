@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<category name="main">
+    <dish name="hotdog" />
+    <category name="hotfood">
+        <dish name="borsh" />
+    </category>
+    <dish name="sausage" />
+</category>

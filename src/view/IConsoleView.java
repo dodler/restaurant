@@ -5,6 +5,10 @@
  */
 package view;
 
+import java.util.ArrayList;
+import model.Dish;
+import model.ICategory;
+
 /**
  * интерфейс для вьюхи будет командная строка также нужно сделать возможность
  * вывода в файл что ли
@@ -12,12 +16,15 @@ package view;
  * @author dodler
  */
 public interface IConsoleView {
-    /* 
-    show(Category)
-    showWithDishes(Category)
-    show(List<Category>)
-    show(List<Dish>)
-    show(String)
-    */
+    void show(ICategory cat);
+    void showWithDishes(ICategory cat);
+
+    /**
+     *
+     * @param catList
+     */
+    void show(ArrayList<ICategory> catList);
+    void showDish(ArrayList<Dish> dishList);
+    void show(String source);
     
 }

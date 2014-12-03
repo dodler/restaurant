@@ -45,4 +45,6 @@ public interface ICategory {
      */
     ArrayList<ICategory> getSubCategoryList();
     
+    public void setName(String name);
+    
 }

@@ -26,6 +26,11 @@ public class CategoryImpl implements ICategory{
     }
     
     @Override
+    public void setName(String name){
+        this.name = name;
+    }
+    
+    @Override
     public int getId() {
         return this.id;
     }

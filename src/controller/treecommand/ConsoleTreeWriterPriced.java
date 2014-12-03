@@ -7,6 +7,7 @@ package controller.treecommand;
 
 import model.Dish;
 import model.ICategory;
+import view.IConsoleView;
 
 /**
  *
@@ -16,12 +17,17 @@ public class ConsoleTreeWriterPriced extends TreeCommand{
 
     private StringBuilder categoryLevel = new StringBuilder();
     private StringBuilder output = new StringBuilder();
+    
+    public ConsoleTreeWriterPriced(IConsoleView view){
+        super(view);
+    }
+    
     @Override
     public void handle(ICategory category){
         categoryLevel.append("_:");
         output.append(categoryLevel);
         output.append(category.getName()); // для вывода имени категории с учетом уровня вложенности
-        System.out.println(output.toString());
+        view.show(output.toString());
         output.replace(0, output.length(), "");
         for(Dish d:category.getDishList()){
             output.append(categoryLevel);
@@ -30,7 +36,7 @@ public class ConsoleTreeWriterPriced extends TreeCommand{
             output.append(". Цена: ");
             output.append(d.getCost());
             
-            System.out.println(output.toString());
+            view.show(output.toString());
             output.replace(0, output.length(), "");
         }
     }

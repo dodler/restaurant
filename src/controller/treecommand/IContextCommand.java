@@ -5,23 +5,13 @@
  */
 package controller.treecommand;
 
+import controller.context.TreePassContext;
 import model.ICategory;
-import view.IConsoleView;
 
 /**
  *
  * @author dodler
  */
-public abstract class TreeCommand {
-    IConsoleView view;
-    
-    public TreeCommand(){
-        
-    }
-    
-    public TreeCommand(IConsoleView view){
-        this.view = view;
-    }
-    
-    public abstract void handle(ICategory category);
+public interface IContextCommand {
+    public Object handle(TreePassContext context, ICategory category);
 }
