@@ -4,13 +4,15 @@
  */
 package controller;
 
-import controller.context.TreePassContext;
-import model.exceptions.CategoryNotFoundException;
+import controller.treecommand.CategoryFoundEvent;
+import controller.treecommand.CategoryParentFinder;
+import controller.treecommand.CategoryTreeFinder;
 import controller.treecommand.ConsoleTreeWriter;
 import controller.treecommand.ConsoleTreeWriterPriced;
-import controller.treecommand.IContextCommand;
+import controller.treecommand.DishCategoryFinder;
+import controller.treecommand.DishFoundEvent;
 import controller.treecommand.TreeCommand;
-import controller.treecommand.TreeFinder;
+import controller.treecommand.DishTreeFinder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Dish;
@@ -24,7 +26,7 @@ import view.IConsoleView;
 public class ModelControllerImpl implements IModelController {
 
     private ICategory rootCategory;
-    
+
     private IConsoleView view;
 
     /**
@@ -36,13 +38,13 @@ public class ModelControllerImpl implements IModelController {
     public ModelControllerImpl(ICategory rootCategory) {
         this.rootCategory = rootCategory;
     }
-    
-    public ModelControllerImpl(ICategory rootCategory, IConsoleView view){
+
+    public ModelControllerImpl(ICategory rootCategory, IConsoleView view) {
         this(rootCategory);
         this.view = view;
     }
-    
-    public void setView(IConsoleView view){
+
+    public void setView(IConsoleView view) {
         this.view = view;
     }
 
@@ -62,20 +64,6 @@ public class ModelControllerImpl implements IModelController {
             }
         }
     }
-    
-    private Object treeBypass(IContextCommand command, ICategory category, TreePassContext context){
-        if (command != null && category != null) {
-            command.handle(context, category);
-        }
-        
-        context.parent = category;
-        if (category.getSubCategoryList().size() > 0) {
-            for (ICategory c : category.getSubCategoryList()) {
-                treeBypass(command, c, context);
-            }
-        } // TODO доделать адекватный обход
-        return null;
-    }
 
     @Override
     public void showCategoryDishTreePriced() {
@@ -87,67 +75,62 @@ public class ModelControllerImpl implements IModelController {
         this.treeBypass(new ConsoleTreeWriter(view), rootCategory);
     }
 
-    private ICategory findCategory(ICategory category, String name) throws CategoryNotFoundException {
-        if (category.getName().equals(name)) {
-            return category;
-        }
-        throw new CategoryNotFoundException();
-    }
-
     @Override
     public void showDishListPriced(String category) {
-        ICategory cat = null;
-        try {
-            cat = findCategory(rootCategory, category);
-        } catch (CategoryNotFoundException cnfe) {
-            System.out.println("Не найдено");
-        }
+        /**
+         * сделал наблюдатель для поиска при нахождении просто запускает событие
+         */
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
 
-        for (Dish d : cat.getDishList()) {
-            System.out.println(d.getName() + " " + d.getCost());
-        }
+            @Override
+            public void onCategoryFound() {
+                for (Dish d : cat.getDishList()) {
+                    view.show(cat);// вывод найденных блюд в категории 
+                }
+            }
+
+        };
+
+        treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории 
+        // с заданным именем
+
     }
 
-    @Override
-    public void showDishList(String category) {
-        ICategory cat = null;
-        try {
-            cat = findCategory(rootCategory, category);
-        } catch (CategoryNotFoundException cnfe) {
-            System.out.println("Не найдено");
-        }
-
-        for (Dish d : cat.getDishList()) {
-            System.out.println(d.getName());
-        }
-    }
-    
-    private void delete(ICategory category, String name){
-        for(Dish d:category.getDishList()){
-            if (d.getName().equals(name)){
+    private void delete(ICategory category, String name) {
+        for (Dish d : category.getDishList()) {
+            if (d.getName().equals(name)) {
                 category.getDishList().remove(d);
             }
         }
     }
-    
-    @Override
-    public void deleteDish(String name) {
-        delete(rootCategory, name);
-    }
 
     @Override
     public void deleteDishCategory(String category) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
+
+            @Override
+            public void onCategoryFound() {
+                cat.getDishList().clear(); // удаление блюд из найденной категории
+            }
+
+        };
+        treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // запуск поиска плюс удаление
     }
 
     @Override
-    public void deleteCategory(String category) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void deleteCategory(final String category) {
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
 
-    @Override
-    public void deleteDish(String category, String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            @Override
+            public void onCategoryFound() {
+                for (ICategory c : cat.getSubCategoryList()) {
+                    if (cat.getName().equals(category)) {
+                        cat.getSubCategoryList().remove(c); // удаление найенной категории
+                    }
+                }
+            }
+        };
+        treeBypass(new CategoryParentFinder(category, cfe), rootCategory);
     }
 
     @Override
@@ -160,36 +143,67 @@ public class ModelControllerImpl implements IModelController {
     }
 
     @Override
-    public void addDish(String category, String name, double price) {
-        ICategory cat = null;
+    public void addDish(String category, final String name, final double price) {
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
 
-        try {
-            cat = findCategory(rootCategory, category);
-        } catch (CategoryNotFoundException ex) {
-            Logger.getLogger(ModelControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            @Override
+            public void onCategoryFound() {
+                try {
+                    cat.addDish(new Dish(name, price));
+                } catch (Exception ex) {
+                    Logger.getLogger(ModelControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        };
+        treeBypass(new CategoryTreeFinder(category, cfe), rootCategory);
     }
 
     @Override
-    public void editCategoryName(String oldName, String newName) {
-        ICategory cat = null;
+    public void editCategoryName(final String oldName, final String newName) {
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
 
-        try {
-            cat = findCategory(rootCategory, oldName);
-        } catch (CategoryNotFoundException ex) {
-            Logger.getLogger(ModelControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        cat.setName(newName);
+            @Override
+            public void onCategoryFound() {
+                cat.setName(newName);
+            }
+
+        };
+        treeBypass(new CategoryTreeFinder(oldName, cfe), rootCategory);
     }
 
     @Override
-    public void editDishPrice(String name, double newPrice) {
-        
+    public void editDishPrice(String name, final double newPrice) {
+        DishFoundEvent dfe = new DishFoundEvent() {
+
+            @Override
+            public void onDishFound() {
+                try {
+                    d.setCost(newPrice);
+                } catch (Exception ex) {
+                    Logger.getLogger(ModelControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        };
+        treeBypass(new DishTreeFinder(name, dfe), rootCategory);
     }
 
     @Override
-    public void editDishName(String oldName, String newName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void editDishName(String oldName, final String newName) {
+        DishFoundEvent dfe = new DishFoundEvent() {
+
+            @Override
+            public void onDishFound() {
+                try {
+                    d.setName(newName);
+                } catch (Exception ex) {
+                    Logger.getLogger(ModelControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        };
+        treeBypass(new DishTreeFinder(oldName, dfe), rootCategory);
     }
 
     @Override
@@ -198,7 +212,24 @@ public class ModelControllerImpl implements IModelController {
     }
 
     public void findName(String name) {
-        treeBypass(new TreeFinder(name), rootCategory);
+        treeBypass(new DishTreeFinder(name), rootCategory);
+    }
+
+    @Override
+    public void deleteDish(final String name) {
+        CategoryFoundEvent cfe = new CategoryFoundEvent(){
+
+            @Override
+            public void onCategoryFound() {
+                for(Dish d:cat.getDishList()){
+                    if(d.equals(name)){
+                        cat.getDishList().remove(d);
+                    }
+                }
+            }
+            
+        };
+        treeBypass(new DishCategoryFinder(name, cfe), rootCategory);
     }
 
 }

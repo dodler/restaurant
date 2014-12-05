@@ -5,13 +5,23 @@
  */
 package controller.treecommand;
 
-import controller.context.TreePassContext;
-import model.ICategory;
+import model.Dish;
 
 /**
  *
  * @author dodler
  */
-public interface IContextCommand {
-    public Object handle(TreePassContext context, ICategory category);
+public abstract class DishFoundEvent {
+
+    protected Dish d;
+
+    public Dish getDish() {
+        return this.d;
+    }
+
+    public void setDish(Dish d){
+        this.d = d;
+    }
+
+    public abstract void onDishFound();
 }

@@ -23,15 +23,9 @@ public interface IModelController {
 
     /**
      * вывод всех блюд из категории с ценами
+     * @param category - имя категории, из которой надо все вывести
      */
     void showDishListPriced(String category);
-
-    /**
-     * вывод блюд категории
-     *
-     * @param category
-     */
-    void showDishList(String category);
 
     /**
      * удаляет блюдо. будет произведен поиск по всему дереву категорий
@@ -55,17 +49,10 @@ public interface IModelController {
     void deleteCategory(String category);
 
     /**
-     * удаляет одно блюдо из категории
-     *
-     * @param category - категория, которая содержит блюдо
-     * @param name - имя блюда
-     */
-    void deleteDish(String category, String name);
-
-    /**
      * добавляет блюдо в корневую категорию
      *
      * @param name - имя блюда
+     * @param price - цена блюда
      */
     void addDish(String name, double price);
 

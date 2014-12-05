@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <category name="main">
-    <dish name="hotdog" />
+    <dish name="hotdog" price="120" />
     <category name="hotfood">
-        <dish name="borsh" />
+        <dish name="borsh"  price = "300"/>
     </category>
-    <dish name="sausage" />
+    <dish name="sausage" price = "60"/>
 </category>

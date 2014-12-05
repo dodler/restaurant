@@ -25,7 +25,7 @@ public class ShowCommand extends CommandHandler {
                 if (arg[1].equals("all")) {
                     controller.showCategoryDishTree(); // вывод названий всех блюд без цен вместе с категориями
                 } else {
-                    controller.showDishList(arg[1]); // вывод определенной категории без цен
+                    //controller.showDishList(arg[1]); // вывод определенной категории без цен
                 }
                 break;
             case 3:
@@ -37,6 +37,7 @@ public class ShowCommand extends CommandHandler {
                 }else{
                     controller.showDishListPriced(arg[2]); // вывод блюд категории с ценами
                 }
+            break;
             default:
                 throw new CommandSyntaxException("Неверный формат команды show.");
         }

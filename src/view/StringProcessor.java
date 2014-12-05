@@ -53,8 +53,8 @@ public class StringProcessor {
         for (CommandHandler ch : commandList) {
             try {
                 if (ch.isApplicable(words)) {
-                    ch.handle(words);
                     commandApplicated = true;
+                    ch.handle(words);
                 }
             } catch (CommandSyntaxException sce) {
                 ch.showCorrectCommandFormat();

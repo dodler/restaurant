@@ -46,10 +46,15 @@ public class ModelImpl implements IModel, Serializable {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(markupSource);
-        rootCategory = new CategoryImpl(doc.getChildNodes().item(0).getAttributes().getNamedItem("name").getTextContent());
+        //rootCategory = new CategoryImpl(doc.getChildNodes().item(0).getAttributes().getNamedItem("name").getTextContent());
         try {
-            //System.out.println(doc.getChildNodes().item(0));
-            initCat(rootCategory, doc.getChildNodes().item(0)); // начинаем рекурсивный обход
+            //System.out.println(doc.getChildNodes().item(0).getChildNodes().getLength());
+            //initCat(rootCategory, doc.getChildNodes().item(0)); // начинаем рекурсивный обход
+
+            for (int i = 0; i < doc.getChildNodes().getLength(); i++) {
+                //System.out.println(doc.getChildNodes().item(i).getAttributes().getNamedItem("name").getTextContent());
+                initCat(null, doc.getChildNodes().item(i));
+            }
         } catch (Exception ex) {
             Logger.getLogger(ModelImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -63,23 +68,31 @@ public class ModelImpl implements IModel, Serializable {
         if ((prc = node.getAttributes().getNamedItem("price")) != null) {
             price = Double.parseDouble(prc.getTextContent());
         }
+
         ICategory newRoot = null;
         switch (type) {
             case "dish":
                 root.addDish(new Dish(name, price));
                 break;
             case "category":
-                newRoot = new CategoryImpl(name);
-                root.addCategory(newRoot);
+                if (rootCategory == null) {
+                    rootCategory = new CategoryImpl(node.getAttributes().getNamedItem("name").getTextContent());
+                    newRoot = rootCategory;
+                } else {
+                    newRoot = new CategoryImpl(name);
+                    root.addCategory(newRoot);
+                }
                 break;
         }
         NodeList childs = node.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
-            if (childs.item(i).getNodeName().equals("category") && newRoot != null) {
+            //if (childs.item(i).getNodeName().equals("category") && newRoot != null) {
+            if (childs.item(i).getNodeName().equals("category") || childs.item(i).getNodeName().equals("dish")) {
                 initCat(newRoot, childs.item(i));
-            }else if (childs.item(i).getNodeName().equals("dish")){
-                initCat(root, childs.item(i));
             }
+            //} else if (childs.item(i).getNodeName().equals("dish")) {
+            //  initCat(root, childs.item(i));
+            //}
         }
     }
 

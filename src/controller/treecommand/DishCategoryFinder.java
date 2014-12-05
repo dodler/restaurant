@@ -9,22 +9,30 @@ import model.Dish;
 import model.ICategory;
 
 /**
- *
+ * команда поиска категории, в которой расположено блюдо
  * @author dodler
  */
-public class TreeFinder extends TreeCommand{
+public class DishCategoryFinder extends TreeCommand{
 
     private String name;
+    private CategoryFoundEvent cfe;
     
-    public TreeFinder(String name){
+    public DishCategoryFinder(String name, CategoryFoundEvent cfe){
         this.name = name;
+        this.cfe = cfe;
     }
+    
+    public void setEventHandler(CategoryFoundEvent cfe){
+        this.cfe = cfe;
+    }
+    
     
     @Override
     public void handle(ICategory category) {
         for(Dish d:category.getDishList()){
             if (d.getName().equals(name)){
-                System.out.println("gotcha:" + name);
+                cfe.setCategory(category);
+                cfe.onCategoryFound();
             }
         }
     }
