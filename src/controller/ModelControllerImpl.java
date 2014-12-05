@@ -73,6 +73,7 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void showCategoryDishTree() {
         this.treeBypass(new ConsoleTreeWriter(view), rootCategory);
+        // комментарий
     }
 
     @Override
