@@ -5,4 +5,5 @@
         <dish name="borsh"  price = "300"/>
     </category>
     <dish name="sausage" price = "60"/>
+    <dish name="test" price = "60"/>
 </category>
