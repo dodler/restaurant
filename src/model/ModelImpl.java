@@ -38,7 +38,7 @@ public class ModelImpl implements IModel,Serializable {
     }
 
 
-    // Метод рекурсивного обхода дерева
+    // Метод рекурсивного обхода дерева НЕ ОБРАЩАТЬ ВНИМАНИЯ! только начал разбираться
     public void treeBypass(TreeCommand command, ICategory rootCategory) {
         if (command != null && rootCategory != null) {
             command.handle(rootCategory);
