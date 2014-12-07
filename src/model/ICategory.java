@@ -5,46 +5,60 @@
  */
 package model;
 
+import model.exceptions.IncorrectCostException;
+
 import java.util.ArrayList;
+import java.util.UUID;
 
-/**
- *
- * @author dodler
- */
 public interface ICategory {
-    
-    int getId();
-    
-    /**
-     * возвращает имя категории
-     * @return имя категории
-     */
-    String getName();
-    
-    /**
-     * добавляет категорию в список дочерних категорий
-     * @param c категория, которую нужно добавить в список дочерних категорий
-     */
-    void addCategory(ICategory c);
 
-    /**
-     * добавляет блюдо в категорию
-     * @param d - блюдо, которое нужно добавить
-     */
-    void addDish(Dish d);
+    /* МЕТОДЫ ОПЕРАЦИЙ С ВЫДЕЛЕННОЙ КАТЕГОРИЕЙ */
+    // Метод получения id категории.
+    public UUID getId();
 
-    /**
-     * метод для доступа в списку блюд категории
-     * @return массив блюд категории
-     */
-    ArrayList<Dish> getDishList();
+    // Метод получения названия категории.
+    public String getName();
 
-    /**
-     * метод для доступа к дочерним категориям
-     * @return - массив дочерних категорий
-     */
-    ArrayList<ICategory> getSubCategoryList();
-    
-    public void setName(String name);
-    
+    // Метод изменения названия категории.
+    public void setName(String newName);
+
+    // Метод получения списка дочерних категорий.
+    public ArrayList<Category> getSubCategoryList();
+
+    // Метод изменения списка дочерних категорий.
+    public void addSubCategoryList(ArrayList<Category> categoryList);
+
+    // Метод получения списка блюд.
+    public ArrayList<Dish> getDishList();
+
+    // Метод изменения списка блюд.
+    public void addDishList(ArrayList<Dish> dishList);
+
+
+    /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
+    // Метод получения дочерней категории по имени.
+    public Category getSubCategory(UUID ID);
+
+    // Метод добавления дочерней категории по названию.
+    public void addCategory(String name);
+
+    // Метод добавления дочерней категории по объекту.
+    public void addCategory(Category newCategory);
+
+    //  Метод удаления категории.
+    public void removeCategory(Category categoryForDelete);
+
+
+    /* МЕТОДЫ ОПЕРАЦИЙ С БЛЮДАМИ */
+    // Метод добавления блюда по названию и цене.
+    public void addDish(String name,double cost) throws IncorrectCostException;
+
+    // Метод добавления блюда по названию.
+    public void addDish(String name) throws IncorrectCostException;
+
+    // Метод добавления блюда по объекту.
+    public void addDish(Dish newDish);
+
+    // Метод удаления блюда.
+    public void removeDish(Dish dishForDelete);
 }

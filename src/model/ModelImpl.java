@@ -4,96 +4,78 @@
  */
 package model;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import controller.treecommand.TreeCommand;
 
-/**
- *
- * @author Артем
- */
-public class ModelImpl implements IModel, Serializable {
+import java.io.*;
+import java.util.UUID;
 
-    private ICategory rootCategory;
+public class ModelImpl implements IModel,Serializable {
+    private Category rootCategory;
 
-    //TODO: нужно сделать сериализацию, и рут категорию
-    @Override
-    public ICategory getRootCategory() {
+    public Category getRootCategory() {
+        if (rootCategory == null) {
+            rootCategory =  new Category("МЕНЮ");
+        }
         return rootCategory;
     }
 
-    @Override
     public void saveToFile(String name) throws IOException {
-        BufferedReader br;
-        br = new BufferedReader(new FileReader(name));
-
+        File file = new File(name);
+        if (!file.exists()) file.createNewFile();
+        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(name)));
+        out.writeObject(rootCategory);
+        out.close();
     }
 
-    @Override
-    public void loadFromFile(String name) throws ParserConfigurationException, SAXException, IOException {
-        File markupSource = new File(name);
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(markupSource);
-        //rootCategory = new CategoryImpl(doc.getChildNodes().item(0).getAttributes().getNamedItem("name").getTextContent());
+    public void loadFromFile(String name) throws IOException {
         try {
-            //System.out.println(doc.getChildNodes().item(0).getChildNodes().getLength());
-            //initCat(rootCategory, doc.getChildNodes().item(0)); // начинаем рекурсивный обход
-
-            for (int i = 0; i < doc.getChildNodes().getLength(); i++) {
-                //System.out.println(doc.getChildNodes().item(i).getAttributes().getNamedItem("name").getTextContent());
-                initCat(null, doc.getChildNodes().item(i));
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(ModelImpl.class.getName()).log(Level.SEVERE, null, ex);
+            ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(name)));
+            rootCategory = (Category) in.readObject();
+        } catch (ClassNotFoundException e) {
+            System.out.print(e + "Root-категория не найдена. Создаем новую root-категорию");
+            rootCategory = new Category("МЕНЮ");
         }
     }
 
-    private void initCat(ICategory root, Node node) throws Exception {
-        String type = node.getNodeName(), // получаем тип или еду
-                name = node.getAttributes().getNamedItem("name").getTextContent(); // получили имя
-        double price = 0;
-        Node prc;
-        if ((prc = node.getAttributes().getNamedItem("price")) != null) {
-            price = Double.parseDouble(prc.getTextContent());
-        }
 
-        ICategory newRoot = null;
-        switch (type) {
-            case "dish":
-                root.addDish(new Dish(name, price));
-                break;
-            case "category":
-                if (rootCategory == null) {
-                    rootCategory = new CategoryImpl(node.getAttributes().getNamedItem("name").getTextContent());
-                    newRoot = rootCategory;
-                } else {
-                    newRoot = new CategoryImpl(name);
-                    root.addCategory(newRoot);
-                }
-                break;
+    // Метод рекурсивного обхода дерева
+    public void treeBypass(TreeCommand command, ICategory rootCategory) {
+        if (command != null && rootCategory != null) {
+            command.handle(rootCategory);
         }
-        NodeList childs = node.getChildNodes();
-        for (int i = 0; i < childs.getLength(); i++) {
-            //if (childs.item(i).getNodeName().equals("category") && newRoot != null) {
-            if (childs.item(i).getNodeName().equals("category") || childs.item(i).getNodeName().equals("dish")) {
-                initCat(newRoot, childs.item(i));
+        if (rootCategory.getSubCategoryList().size() > 0) {
+            for (ICategory c : rootCategory.getSubCategoryList()) {
+                treeBypass(command, c);
             }
-            //} else if (childs.item(i).getNodeName().equals("dish")) {
-            //  initCat(root, childs.item(i));
-            //}
         }
+    }
+
+
+    public boolean checkUnique(Category rootCategory, Category searchCategory){
+        for (int i = 0; i < rootCategory.subCategoryList.size();i++){
+            if (rootCategory.subCategoryList.get(i).getId() == searchCategory.getId()){
+                return false;
+            } else {
+                if (!checkUnique(rootCategory.subCategoryList.get(i), searchCategory)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean checkUnique(Category rootCategory, Dish searchDish) {
+        for (int i = 0; i < rootCategory.subCategoryList.size(); i++) {
+            for (int j = 0; j < rootCategory.dishList.size(); j++) {
+                if (rootCategory.dishList.get(j).getId() == searchDish.getId()) {
+                    return false;
+                }
+            }
+            if (!checkUnique(rootCategory.subCategoryList.get(i), searchDish)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

@@ -9,16 +9,22 @@
  */
 package model;
 
+import controller.treecommand.TreeCommand;
+
 import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 
-public interface IModel{
+public interface IModel {
 
-    ICategory getRootCategory();
+    Category getRootCategory();
 
     void saveToFile(String name) throws IOException;
 
-    void loadFromFile(String name)  throws ParserConfigurationException, SAXException, IOException ;
+    void loadFromFile(String name) throws IOException;
+
+    void treeBypass(TreeCommand command, ICategory rootCategory);
+
+    boolean checkUnique(Category rootCategory, Category searchCategory);
+
+    boolean checkUnique(Category rootCategory, Dish searchDish);
 
 }

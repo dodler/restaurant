@@ -1,5 +1,7 @@
 package model;
 
+import model.exceptions.IncorrectCostException;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -8,9 +10,10 @@ public class Dish implements Serializable{
     private double cost;
     private UUID ID;
 
+
 /* КОНСТРУКТОРЫ */
     // Конструктор, создающий блюдо с указанным названием и ценой.
-    public Dish(String name, double cost) throws Exception{
+    public Dish(String name, double cost) throws IncorrectCostException{
         checkCost(cost);
         this.name = name;
         this.cost = cost;
@@ -18,9 +21,10 @@ public class Dish implements Serializable{
     }
 
     // Конструктор, создающий блюдо с указанным названием и стандартной ценой 100 руб.
-    public Dish(String name) throws Exception{
+    public Dish(String name) throws IncorrectCostException{
         this(name, 0);
     }
+
 
 /* МЕТОДЫ */
     // Метод получения названия блюда.
@@ -39,20 +43,20 @@ public class Dish implements Serializable{
     }
 
     // Метод изменения цены блюда.
-    public void setCost(double cost) throws Exception{
+    public void setCost(double cost) throws IncorrectCostException{
         checkCost(cost);
         this.cost = cost;
     }
 
     // Метод получения ID блюда.
-    public UUID getID(){
+    public UUID getId(){
         return this.ID;
     }
 
 /* ПРИВАТНЫЕ МЕТОДЫ */
     // Метод проверки правильности цены блюда.
-    private void checkCost(double cost) throws Exception{
-           if (cost < 0) throw new Exception();
+    private void checkCost(double cost) throws IncorrectCostException{
+           if (cost < 0) throw new IncorrectCostException();
     }
 
 }
