@@ -6,6 +6,7 @@
 package view.command;
 
 import controller.IModelController;
+import view.IConsoleView;
 import view.command.exception.CommandSyntaxException;
 
 /**
@@ -14,8 +15,8 @@ import view.command.exception.CommandSyntaxException;
  */
 public class RenameCommand extends CommandHandler {
 
-    public RenameCommand(IModelController controller) {
-        super(controller);
+    public RenameCommand(IModelController controller, IConsoleView view) {
+        super(controller, view);
     }
 
     /**
@@ -25,16 +26,18 @@ public class RenameCommand extends CommandHandler {
      */
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
-        switch (arg.length) {
-            case 3: // переименование блюда
-                controller.editDishName(arg[1], arg[2]);
+        if (arg.length != 4){
+            throw new CommandSyntaxException("Мало аргументов для команды rename");
+        }
+        switch (arg[1]) {
+            case "-d": // переименование блюда
+                controller.editDishName(arg[2], arg[3]);
                 break;
-            case 4:
-                if (!arg[1].equals("-c")) throw new CommandSyntaxException();
-                
+            case "-c":
                 controller.editCategoryName(arg[2], arg[3]);
-                
                 break;
+            default:
+                throw new CommandSyntaxException();
         }
     }
 
@@ -45,12 +48,15 @@ public class RenameCommand extends CommandHandler {
 
     @Override
     public void showCorrectCommandFormat() {
-        System.out.println("Формат команды: rename [-c] oldname newname - переименовать заменить имя блюда oldname на newname. \n -c - переименовать категорию");
+        System.out.println("Формат команды: rename [опции] [значения]\n"
+                + "Опции: -с - переименовать категорию"
+                + "-d - переименовать блюдо"
+                + "\nЗначения: *oldname* *newname* - имя блюда или категории, которое надо сменить, newname - новое имя");
     }
 
     @Override
     public void showShortName() {
-        System.out.println("Пример. rename борщ солянка");
+        System.out.println("Пример. rename -d борщ солянка");
     }
 
 }

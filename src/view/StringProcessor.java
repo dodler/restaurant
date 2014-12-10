@@ -26,18 +26,24 @@ public class StringProcessor {
     private String[] words;
     private IConsoleView console;
     private ArrayList<CommandHandler> commandList;
+    private IConsoleView view;
 
     public StringProcessor() {
-        this(null);
+        this(null, null);
     }
     
-    public StringProcessor(IModelController controller){
+    public ArrayList<CommandHandler> getCommandList(){
+        return this.commandList;
+    }
+    
+    public StringProcessor(IModelController controller, IConsoleView view){
+        this.view = view;
         commandList = new ArrayList<>();
-        commandList.add(new AddCommand(controller));
-        commandList.add(new DeleteCommand(controller));
-        commandList.add(new FindCommand(controller));
-        commandList.add(new RenameCommand(controller));
-        commandList.add(new ShowCommand(controller));
+        commandList.add(new AddCommand(controller, view));
+        commandList.add(new DeleteCommand(controller, view));
+        commandList.add(new FindCommand(controller, view));
+        commandList.add(new RenameCommand(controller, view));
+        commandList.add(new ShowCommand(controller, view));
     }
 
     /**
@@ -47,7 +53,7 @@ public class StringProcessor {
      * @throws view.command.exception.CommandSyntaxException - ошибка ввода команды. будет выброс эксепшена
      */
     public void handle(String source) throws CommandSyntaxException {
-        System.out.println("обработка " + source);
+        //view.show("обработка " + source);
         words = source.split(" "); // получили команды и аргументы
         boolean commandApplicated = false;
         for (CommandHandler ch : commandList) {

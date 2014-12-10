@@ -6,16 +6,21 @@ package nc;
 
 import controller.IModelController;
 import controller.ModelControllerImpl;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import model.IModel;
-import model.ModelImpl;
+import model.ModelImplXML;
 import org.xml.sax.SAXException;
 import view.CommandLineProcessor;
 import view.ConsoleViewImpl;
 import view.IConsoleView;
+import view.command.CommandHandler;
 
 /**
  * AppController - синглтон.
@@ -36,16 +41,42 @@ public class AppController{
      * инициализация контроллера и вьюхи
      */
     private AppController(){
-        IModel model = new ModelImpl();
+        
+        ArrayList<String> config = new ArrayList<>();
+        BufferedReader reader = null;
         try {
-            model.loadFromFile("/home/dodler/NetBeansProjects/MyController/test.xml");
+            reader = new BufferedReader(new FileReader("config.txt"));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (reader == null){
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, "не удалось считать конфиг");
+            return;
+        }
+        String in;
+        try {
+            while((in = reader.readLine())!= null){
+                config.add(in);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        IModel model = new ModelImplXML();
+        try {
+            model.loadFromFile(config.get(0));
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
         }
         IConsoleView view = new ConsoleViewImpl();
         ModelControllerImpl mci = new ModelControllerImpl(model.getRootCategory(), view);
-        CommandLineProcessor clp = new CommandLineProcessor(System.in, mci);
+        CommandLineProcessor clp = new CommandLineProcessor(System.in, mci, view);
         clp.start();
+        view.show("Господин приветствую тебя. Позволь показать тебе доступные команды.");
+        for(CommandHandler ch:clp.getCommandList()){
+            ch.showCorrectCommandFormat();
+        }
+        view.show("Введи help если захочешь снова лицезреть это");
     }
     
     static{

@@ -31,10 +31,10 @@ public class DishTreeFinder extends TreeCommand{
         this.dfe = dfe;
     }
     
-    @Override
+    @Override 
     public void handle(ICategory category) {
         for(Dish d:category.getDishList()){
-            if (d.getName().equals(name)){
+            if (d.getName().equals(name) || name.equals("")){
                 dfe.setDish(d);
                 dfe.onDishFound();
             }

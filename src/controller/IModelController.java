@@ -11,6 +11,8 @@ package controller;
  */
 public interface IModelController {
     
+    void showDishList(String category);
+    
     /**
      * вывод всех категорий и блюд с ценами
      */
@@ -40,7 +42,7 @@ public interface IModelController {
      * @param category - категория
      */
     void deleteDishCategory(String category);
-
+//
     /**
      * удаляет категорию с блюдами целиком
      *
@@ -76,5 +78,41 @@ public interface IModelController {
     void editDishName(String oldName, String newName);
 
     void editDishCategory(String oldCategory, String name, String newCategory);
+    
+    /**
+     * метод выводит через IConsoleView все блюда с ценой больше заданной
+     * @param price - пороговая цена
+     */
+    void findPriceMore(double price);
+    
+    /**
+     * метод выводит через IConsoleView все блюда с ценой меньше заданной 
+     * @param price - пороговая цена
+     */
+    void findPriceLess(double price);
+    
+    /**
+     * метод выводит через IConsoleView все блюда с ценой равной заданной
+     * @param price - заданная цена
+     */
+    void findPriceEqual(double price);
+    
+    /**
+     * метод поиска блюд в диапазоне цен
+     * также производится вывод через IConsoleView
+     * всех найденных блюд
+     * @param left - нижняя пороговая цена
+     * @param right - верхняя пороговая цена
+     */
+    void findPriceInterval(double left, double right);
+    
+    /**
+     * поиск блюда по шаблону с выводом черещ вью
+     * шаблон - имя
+     * * - любое количество символов
+     * допустимо любоеколичество звездочек
+     * @param pattern - шаблон поиска
+     */
+    void findPattern(String pattern);
     
 }

@@ -6,27 +6,35 @@
 package view.command;
 
 import controller.IModelController;
+import view.IConsoleView;
 import view.command.exception.CommandSyntaxException;
 
 /**
  *
  * @author dodler
  */
-public class AddCommand extends CommandHandler{
+public class AddCommand extends CommandHandler {
 
-    public AddCommand(IModelController controller) {
-        super(controller);
+    public AddCommand(IModelController controller, IConsoleView view) {
+        super(controller, view);
     }
-    
+
     @Override
-    public void handle(String[] arg) throws CommandSyntaxException{
-        if (arg.length == 4){
-            // добавлениею определенного блюда из категории
-            controller.addDish(arg[1], arg[2], Double.parseDouble(arg[3]));
-        }else if (arg.length == 3){
-            controller.addDish(arg[1], Double.parseDouble(arg[2]));
-        }else{
-            throw new CommandSyntaxException("Неверное число аргументов для команды add");
+    public void handle(String[] arg) throws CommandSyntaxException {
+        switch (arg[1]) {
+            case "-d":
+                // добавлениею определенного блюда из категории
+                if (arg.length == 5) {
+                    controller.addDish(arg[2], arg[3], Double.parseDouble(arg[4])); // добавление в указанную категорию
+                } else {
+                    controller.addDish(arg[2], Double.parseDouble(arg[3])); // добавление в родительскую категоирю
+                }
+                break;
+            case "-c":
+                controller.addDish(arg[2], Double.parseDouble(arg[3]));
+                break;
+            default:
+                throw new CommandSyntaxException("Неверное число аргументов для команды add");
         }
     }
 
@@ -37,11 +45,15 @@ public class AddCommand extends CommandHandler{
 
     @Override
     public void showCorrectCommandFormat() {
-        System.out.println("Формат команды: add category name price или add name price, где category - категория, в которую нужно добавить блюдо, а name - имя блюда, price - цена блюда");
+        view.show("Формат команды: add [опции] [значения]\nОпции: -c - добавление категории, -d - блюда\n"
+                + "Значения: (-n) *category* - имя родительской категории. \n"
+                + "(-c) *category* - не обязательное значение, категория, куда будет добавлено блюдо. \n"
+                + "По умолчанию блюдо будет добавлено в главную категорию\n"
+                + "*name* - имя блюда, *price* - цена блюда.");
     }
 
     @Override
     public void showShortName() {
-        System.out.println("Пример. add борщ 12 - добавляет блюдо борщ с ценой 12. ");
+        view.show("Пример. add -d борщ 12 - добавляет блюдо борщ с ценой 12 в главную категорию");
     }
 }

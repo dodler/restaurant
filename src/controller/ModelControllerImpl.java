@@ -13,6 +13,7 @@ import controller.treecommand.DishCategoryFinder;
 import controller.treecommand.DishFoundEvent;
 import controller.treecommand.TreeCommand;
 import controller.treecommand.DishTreeFinder;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Dish;
@@ -212,25 +213,144 @@ public class ModelControllerImpl implements IModelController {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void findName(String name) {
-        treeBypass(new DishTreeFinder(name), rootCategory);
-    }
-
     @Override
     public void deleteDish(final String name) {
-        CategoryFoundEvent cfe = new CategoryFoundEvent(){
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
 
             @Override
             public void onCategoryFound() {
-                for(Dish d:cat.getDishList()){
-                    if(d.equals(name)){
-                        cat.getDishList().remove(d);
+                Iterator<Dish> dIt = cat.getDishList().iterator();
+                Dish d;
+                while(dIt.hasNext()){
+                    d = dIt.next();
+                    if (d.getName().equals(name)) {
+                        dIt.remove();
                     }
                 }
             }
-            
+
         };
         treeBypass(new DishCategoryFinder(name, cfe), rootCategory);
+    }
+
+    @Override
+    public void showDishList(String category){
+        /**
+         * сделал наблюдатель для поиска при нахождении просто запускает событие
+         */
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
+
+            @Override
+            public void onCategoryFound() {
+                for (Dish d : cat.getDishList()) {
+                    view.show("Блюдо" + d.getName());// вывод найденных блюд в категории 
+                }
+            }
+
+        };
+
+        treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории 
+        // с заданным именем
+    }
+    
+    public void findName(String name) {
+        DishFoundEvent dfe = new DishFoundEvent() {
+
+            @Override
+            public void onDishFound() {
+                view.show("Цена блюда " + d.getName() + " составляет " + d.getCost() + ". Идентификатор: " + d.getID());
+            }
+
+        };
+        treeBypass(new DishTreeFinder(name, dfe), rootCategory);
+    }
+
+    @Override
+    public void findPriceMore(final double price) {
+        DishFoundEvent dfe = new DishFoundEvent() {
+
+            @Override
+            public void onDishFound() {
+                if (d.getCost() > price) {
+                    view.show(d);
+                }
+            }
+
+        };
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
+    }
+
+    @Override
+    public void findPriceLess(final double price) {
+        DishFoundEvent dfe = new DishFoundEvent() {
+
+            @Override
+            public void onDishFound() {
+                if (d.getCost() < price) {
+                    view.show(d);
+                }
+            }
+
+        };
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
+    }
+
+    @Override
+    public void findPriceEqual(final double price) {
+        DishFoundEvent dfe = new DishFoundEvent() {
+
+            @Override
+            public void onDishFound() {
+                if (d.getCost() == price) {
+                    view.show(d);
+                }
+            }
+
+        };
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
+    }
+
+    @Override
+    public void findPriceInterval(final double left, final double right) {
+        DishFoundEvent dfe = new DishFoundEvent() {
+
+            @Override
+            public void onDishFound() {
+                if (d.getCost() > left && d.getCost() < right) {
+                    view.show(d);
+                }
+            }
+
+        };
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
+    }
+
+    @Override
+    public void findPattern(String pattern) {
+        final String[] words = pattern.split("\\*"); // получили слова разделенные друг от друга 
+        DishFoundEvent dfe = new DishFoundEvent() {
+
+            @Override
+            public void onDishFound() {
+                final String name = d.getName();
+                int maxI = -1, found = 0, curI = 0; // maxI - самое дальнее вхождение, curI - текущее вхождение
+                // found - текущее число совпадений
+                for (String word : words) {
+                    if ((curI = name.indexOf(word)) > maxI) {
+                        maxI = curI;
+                        found++;
+                    } else {
+                        return;
+                    }
+                }
+                if (found == words.length) {
+                    view.show(d);
+                }
+
+            }
+
+        };
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
 
 }

@@ -6,6 +6,7 @@
 package view.command;
 
 import controller.IModelController;
+import view.IConsoleView;
 import view.command.exception.CommandSyntaxException;
 
 /**
@@ -14,30 +15,34 @@ import view.command.exception.CommandSyntaxException;
  */
 public class ShowCommand extends CommandHandler {
 
-    public ShowCommand(IModelController controller) {
-        super(controller);
+    public ShowCommand(IModelController controller, IConsoleView view) {
+        super(controller, view);
     }
 
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
-        switch (arg.length) {
-            case 2:
-                if (arg[1].equals("all")) {
-                    controller.showCategoryDishTree(); // вывод названий всех блюд без цен вместе с категориями
-                } else {
-                    //controller.showDishList(arg[1]); // вывод определенной категории без цен
+        switch (arg[1]) {
+            case "-d":
+                if (arg.length == 4 && arg[2].equals("-p")) {// c ценами
+                    if (arg.length == 4) {
+                        controller.showDishListPriced(arg[3]);
+                    } else {
+                        controller.showCategoryDishTreePriced(); // тоже но с ценами
+                    }
+                }else{
+                    if (arg.length == 3){
+                        controller.showDishList(arg[2]); // вывод из категории с с без цен
+                    }else{
+                        controller.showCategoryDishTree(); // вывод названий всех блюд без цен вместе с категориями
+                    }
                 }
                 break;
-            case 3:
-                if (!arg[2].equals("-p")) {
-                    throw new CommandSyntaxException("Неверный ключ для команды show.");
+            case "-c":
+                if (arg.length == 2) {
+                    view.show("доделать");
+                    //controller.show
                 }
-                if (arg[1].equals("all")) {
-                    controller.showCategoryDishTreePriced(); // вывод всех блюд с категориями с ценами
-                }else{
-                    controller.showDishListPriced(arg[2]); // вывод блюд категории с ценами
-                }
-            break;
+                break;
             default:
                 throw new CommandSyntaxException("Неверный формат команды show.");
         }
@@ -50,12 +55,16 @@ public class ShowCommand extends CommandHandler {
 
     @Override
     public void showCorrectCommandFormat() {
-        System.out.println("show [all|category] [-p]. all - вывод всех категорий вместе с блюдами. category - вывод блюд категории. -p - ключ для вывода цен. ");
+        System.out.println("Формат команды: show [опции][значения]\n"
+                + "Опции: -d - вывод блюд\n-c - вывод категорий"
+                + "\n -p - необязательная опция - вывод цен на блюда"
+                + "Значения: (-a) *name* - необязательное значение, вывод блюд категории\n"
+                + "(-c) *name* - необязательное значение, вывод подкатегорий категории");
 
     }
 
     @Override
     public void showShortName() {
-        System.out.println("Пример. show all -p - вывод всех блюд с ценами.");
+        System.out.println("Пример. show -d -p - вывод всех блюд с ценами.");
     }
 }

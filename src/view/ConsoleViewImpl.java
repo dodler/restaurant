@@ -14,22 +14,22 @@ import model.ICategory;
  *
  * @author dodler
  */
-public class ConsoleViewImpl implements IConsoleView{
+public class ConsoleViewImpl implements IConsoleView {
 
     PrintStream out;
-    
-    public ConsoleViewImpl(){
+
+    public ConsoleViewImpl() {
         out = System.out;
     }
-    
-    public ConsoleViewImpl(PrintStream out){
+
+    public ConsoleViewImpl(PrintStream out) {
         this.out = out;
     }
-    
+
     @Override
     public void show(ICategory cat) {
         out.print("Категория: " + cat.getName());
-        out.println(" содержит " + cat.getDishList().size() + " блюд. "); 
+        out.println(" содержит " + cat.getDishList().size() + " блюд. ");
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ConsoleViewImpl implements IConsoleView{
 
     @Override
     public void show(ArrayList<ICategory> catList) {
-        for(ICategory cat:catList){
+        for (ICategory cat : catList) {
             show(cat);
         }
     }
@@ -48,7 +48,7 @@ public class ConsoleViewImpl implements IConsoleView{
     @Override
     public void showDish(ArrayList<Dish> dishList) {
         StringBuilder sb = new StringBuilder();
-        for(Dish d:dishList){
+        for (Dish d : dishList) {
             sb.append("Блюдо ");
             sb.append(d.getName());
             sb.append(" стоит ");
@@ -62,5 +62,15 @@ public class ConsoleViewImpl implements IConsoleView{
     public void show(String source) {
         out.println(source);
     }
-    
+
+    @Override
+    public void show(Dish d) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Блюдо ");
+        sb.append(d.getName());
+        sb.append(" стоит ");
+        sb.append(d.getCost());
+        out.println(sb.toString());
+    }
+
 }

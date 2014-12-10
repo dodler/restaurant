@@ -33,6 +33,7 @@ public class DishCategoryFinder extends TreeCommand{
             if (d.getName().equals(name)){
                 cfe.setCategory(category);
                 cfe.onCategoryFound();
+                return;
             }
         }
     }

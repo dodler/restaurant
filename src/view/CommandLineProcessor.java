@@ -10,8 +10,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import view.command.CommandHandler;
 import view.command.exception.CommandSyntaxException;
 
 /**
@@ -34,13 +36,17 @@ public class CommandLineProcessor extends Thread{
         processor = new StringProcessor();
     }
     
-    public CommandLineProcessor(InputStream commandInput, IModelController controller){
-        this(commandInput);
-        processor = new StringProcessor(controller);
+    public ArrayList<CommandHandler> getCommandList(){
+        return processor.getCommandList();
     }
     
-    public void setController(IModelController controller){
-        processor = new StringProcessor(controller);
+    public CommandLineProcessor(InputStream commandInput, IModelController controller, IConsoleView view){
+        this(commandInput);
+        processor = new StringProcessor(controller, view);
+    }
+    
+    public void setController(IModelController controller, IConsoleView view){
+        processor = new StringProcessor(controller,view);
     }
     
     private StringProcessor processor;
@@ -59,8 +65,14 @@ public class CommandLineProcessor extends Thread{
         while(!isInterrupted()){
             try {
                 input = commandInput.readLine();
-                if (input.equals("exit")){
-                    return; // остановка метода
+                switch (input) {
+                    case "exit":
+                        return; // остановка метода
+                    case "help":
+                        for(CommandHandler ch:processor.getCommandList()){
+                            ch.showCorrectCommandFormat();
+                        }
+                        continue;
                 }
                 processor.handle(input);
             } catch (IOException | CommandSyntaxException ex) {

@@ -6,6 +6,7 @@
 package view.command;
 
 import controller.IModelController;
+import view.IConsoleView;
 import view.command.exception.CommandSyntaxException;
 
 /**
@@ -14,8 +15,8 @@ import view.command.exception.CommandSyntaxException;
  */
 public class DeleteCommand extends CommandHandler {
 
-    public DeleteCommand(IModelController controller) {
-        super(controller);
+    public DeleteCommand(IModelController controller, IConsoleView view) {
+        super(controller, view);
     }
 
     @Override
@@ -28,11 +29,11 @@ public class DeleteCommand extends CommandHandler {
                 case "-c":
                     controller.deleteCategory(arg[2]);
                     break;
+                case "-n":
+                    controller.deleteDish(arg[2]);
                 default:
                     throw new CommandSyntaxException("Ошибка ввода команды delete");
             }
-        } else if (arg.length == 2) {
-            controller.deleteDish(arg[1]); // сразу удаление по имени
         } else {
             throw new CommandSyntaxException("Неверное число аргументов для команды delete");
         }
@@ -46,12 +47,16 @@ public class DeleteCommand extends CommandHandler {
 
     @Override
     public void showCorrectCommandFormat() {
-        System.out.println("Формат команды: delete [-a|-c] name. -a - удаление всех блюд в категории, -с - удаление категории с именем name со всеми блюдами. Запуск команды без ключей приведет к удалению блюда с именем name. ");
+        view.show("Формат команды: delete [опции] [значения]. \n"
+                + "Опции: -a - удаление блюд категории, \n-с - удаление категории с блюдами\n-n - удаление блюда по имени"
+                + "Значения: (-a) *name* - имя категории, в которой нужно удалять"
+                + "\n(-c) *name* - имя категории, которую нужно удалить"
+                + "\n(-n) *name* - имя блюда, которое нужно удалить");
     }
 
     @Override
     public void showShortName() {
-        System.out.println("Пример. delete -a горячее - удалить все блюда из категории горячее.");
+        view.show("Пример. delete -a горячее - удалить все блюда из категории горячее.");
     }
 
 }
