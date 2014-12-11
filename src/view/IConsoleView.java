@@ -26,5 +26,6 @@ public interface IConsoleView {
     void show(ArrayList<ICategory> catList);
     void showDish(ArrayList<Dish> dishList);
     void show(String source);
+    void show(Dish d);
     
 }

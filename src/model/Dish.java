@@ -1,7 +1,5 @@
 package model;
 
-import model.exceptions.IncorrectCostException;
-
 import java.io.Serializable;
 import java.util.UUID;
 

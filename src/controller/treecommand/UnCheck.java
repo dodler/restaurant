@@ -6,22 +6,23 @@
 package controller.treecommand;
 
 import model.ICategory;
-import view.IConsoleView;
 
 /**
  *
  * @author dodler
  */
-public abstract class TreeCommand {
-    protected IConsoleView view;
+public class UnCheck extends TreeCommand{
     
-    public TreeCommand(){
+    
+    ICategory cat;
+    
+    void setCat(ICategory cat){
+        this.cat = cat;
+    }
+    
+    @Override
+    public void handle(ICategory category) {
         
     }
     
-    public TreeCommand(IConsoleView view){
-        this.view = view;
-    }
-    
-    public abstract void handle(ICategory category);
 }

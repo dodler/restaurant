@@ -7,11 +7,12 @@ package model;
 import controller.treecommand.TreeCommand;
 
 import java.io.*;
+import java.util.UUID;
 
-public class ModelImpl implements IModel,Serializable {
-    private CategoryImpl rootCategory;
+public class ModelImpl implements IModel, Serializable {
+    private ICategory rootCategory;
 
-    public CategoryImpl getRootCategory() {
+    public ICategory getRootCategory() {
         if (rootCategory == null) {
             rootCategory =  new CategoryImpl("МЕНЮ");
         }
@@ -37,7 +38,7 @@ public class ModelImpl implements IModel,Serializable {
     }
 
 
-    // Метод рекурсивного обхода дерева НЕ ОБРАЩАТЬ ВНИМАНИЯ! только начал разбираться
+    // Метод рекурсивного обхода дерева
     public void treeBypass(TreeCommand command, ICategory rootCategory) {
         if (command != null && rootCategory != null) {
             command.handle(rootCategory);
@@ -49,13 +50,12 @@ public class ModelImpl implements IModel,Serializable {
         }
     }
 
-
-    public boolean checkUnique(CategoryImpl rootCategory, CategoryImpl searchCategory){
-        for (int i = 0; i < rootCategory.subCategoryList.size();i++){
-            if (rootCategory.subCategoryList.get(i).getId() == searchCategory.getId()){
+    public boolean checkUnique(ICategory rootCategory, ICategory searchCategory){
+        for(ICategory category : rootCategory.getSubCategoryList()){
+            if (category.getId().equals(searchCategory.getId())) {
                 return false;
             } else {
-                if (!checkUnique(rootCategory.subCategoryList.get(i), searchCategory)){
+                if (!checkUnique(category, searchCategory)){
                     return false;
                 }
             }
@@ -63,14 +63,14 @@ public class ModelImpl implements IModel,Serializable {
         return true;
     }
 
-    public boolean checkUnique(CategoryImpl rootCategory, Dish searchDish) {
-        for (int i = 0; i < rootCategory.subCategoryList.size(); i++) {
-            for (int j = 0; j < rootCategory.dishList.size(); j++) {
-                if (rootCategory.dishList.get(j).getId() == searchDish.getId()) {
+    public boolean checkUnique(ICategory rootCategory, Dish searchDish) {
+        for (int i = 0; i < rootCategory.getSubCategoryList().size(); i++) {
+            for (int j = 0; j < rootCategory.getDishList().size(); j++) {
+                if (rootCategory.getDishList().get(j).getId().equals(searchDish.getId())) {
                     return false;
                 }
             }
-            if (!checkUnique(rootCategory.subCategoryList.get(i), searchDish)) {
+            if (!checkUnique(rootCategory.getSubCategoryList().get(i), searchDish)) {
                 return false;
             }
         }

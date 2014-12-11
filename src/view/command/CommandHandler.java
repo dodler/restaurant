@@ -6,6 +6,7 @@
 package view.command;
 
 import controller.IModelController;
+import view.IConsoleView;
 import view.command.exception.CommandSyntaxException;
 
 /**
@@ -14,9 +15,11 @@ import view.command.exception.CommandSyntaxException;
  */
 public abstract class CommandHandler {
     protected IModelController controller;
+    protected IConsoleView view;
     
-    public CommandHandler(IModelController controller){
+    public CommandHandler(IModelController controller,  IConsoleView view){
         this.controller = controller;
+        this.view = view;
     }
     
     public abstract void handle(String[] arg) throws CommandSyntaxException;

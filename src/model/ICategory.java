@@ -5,8 +5,6 @@
  */
 package model;
 
-import model.exceptions.IncorrectCostException;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -23,7 +21,7 @@ public interface ICategory {
     public void setName(String newName);
 
     // Метод получения списка дочерних категорий.
-    public ArrayList<CategoryImpl> getSubCategoryList();
+    public ArrayList<ICategory> getSubCategoryList();
 
     // Метод изменения списка дочерних категорий.
     public void addSubCategoryList(ArrayList<CategoryImpl> categoryList);
@@ -43,10 +41,10 @@ public interface ICategory {
     public void addCategory(String name);
 
     // Метод добавления дочерней категории по объекту.
-    public void addCategory(CategoryImpl newCategory);
+    public void addCategory(ICategory newCategory);
 
     //  Метод удаления категории.
-    public void removeCategory(CategoryImpl categoryForDelete);
+    public void removeCategory(ICategory categoryForDelete);
 
 
     /* МЕТОДЫ ОПЕРАЦИЙ С БЛЮДАМИ */
