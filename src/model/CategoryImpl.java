@@ -1,6 +1,6 @@
 package model;
 
-import model.exceptions.IncorrectCostException;
+import model.IncorrectCostException;
 
 import java.io.Serializable;
 import java.util.ArrayList;

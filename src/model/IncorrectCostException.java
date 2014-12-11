@@ -1,4 +1,4 @@
-package model.exceptions;
+package model;
 
 public class IncorrectCostException extends Exception {
     public IncorrectCostException() {
