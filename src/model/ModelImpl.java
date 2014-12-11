@@ -7,7 +7,6 @@ package model;
 import controller.treecommand.TreeCommand;
 
 import java.io.*;
-import java.util.UUID;
 
 public class ModelImpl implements IModel,Serializable {
     private CategoryImpl rootCategory;
