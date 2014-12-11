@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public interface IModel {
 
-    Category getRootCategory();
+    CategoryImpl getRootCategory();
 
     void saveToFile(String name) throws IOException;
 
@@ -23,8 +23,8 @@ public interface IModel {
 
     void treeBypass(TreeCommand command, ICategory rootCategory);
 
-    boolean checkUnique(Category rootCategory, Category searchCategory);
+    boolean checkUnique(CategoryImpl rootCategory, CategoryImpl searchCategory);
 
-    boolean checkUnique(Category rootCategory, Dish searchDish);
+    boolean checkUnique(CategoryImpl rootCategory, Dish searchDish);
 
 }

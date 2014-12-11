@@ -10,11 +10,11 @@ import java.io.*;
 import java.util.UUID;
 
 public class ModelImpl implements IModel,Serializable {
-    private Category rootCategory;
+    private CategoryImpl rootCategory;
 
-    public Category getRootCategory() {
+    public CategoryImpl getRootCategory() {
         if (rootCategory == null) {
-            rootCategory =  new Category("МЕНЮ");
+            rootCategory =  new CategoryImpl("МЕНЮ");
         }
         return rootCategory;
     }
@@ -30,10 +30,10 @@ public class ModelImpl implements IModel,Serializable {
     public void loadFromFile(String name) throws IOException {
         try {
             ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(name)));
-            rootCategory = (Category) in.readObject();
+            rootCategory = (CategoryImpl) in.readObject();
         } catch (ClassNotFoundException e) {
             System.out.print(e + "Root-категория не найдена. Создаем новую root-категорию");
-            rootCategory = new Category("МЕНЮ");
+            rootCategory = new CategoryImpl("МЕНЮ");
         }
     }
 
@@ -51,7 +51,7 @@ public class ModelImpl implements IModel,Serializable {
     }
 
 
-    public boolean checkUnique(Category rootCategory, Category searchCategory){
+    public boolean checkUnique(CategoryImpl rootCategory, CategoryImpl searchCategory){
         for (int i = 0; i < rootCategory.subCategoryList.size();i++){
             if (rootCategory.subCategoryList.get(i).getId() == searchCategory.getId()){
                 return false;
@@ -64,7 +64,7 @@ public class ModelImpl implements IModel,Serializable {
         return true;
     }
 
-    public boolean checkUnique(Category rootCategory, Dish searchDish) {
+    public boolean checkUnique(CategoryImpl rootCategory, Dish searchDish) {
         for (int i = 0; i < rootCategory.subCategoryList.size(); i++) {
             for (int j = 0; j < rootCategory.dishList.size(); j++) {
                 if (rootCategory.dishList.get(j).getId() == searchDish.getId()) {
