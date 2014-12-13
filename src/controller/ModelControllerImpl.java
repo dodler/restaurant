@@ -258,7 +258,7 @@ public class ModelControllerImpl implements IModelController {
 
             @Override
             public void onDishFound() {
-                view.show("Цена блюда " + d.getName() + " составляет " + d.getCost() + ". Идентификатор: " + d.getID());
+                view.show("Цена блюда " + d.getName() + " составляет " + d.getCost() + ". Идентификатор: " + d.getId());
             }
 
         };

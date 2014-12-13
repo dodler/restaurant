@@ -65,7 +65,7 @@ public class AppController{
         IModel model = new ModelImplXML();
         try {
             model.loadFromFile(config.get(0));
-        } catch (ParserConfigurationException | SAXException | IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
         }
         IConsoleView view = new ConsoleViewImpl();

@@ -35,7 +35,7 @@ public interface ICategory {
 
     /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
     // Метод получения дочерней категории по имени.
-    public CategoryImpl getSubCategory(UUID ID);
+    public ICategory getSubCategory(UUID ID);
 
     // Метод добавления дочерней категории по названию.
     public void addCategory(String name);

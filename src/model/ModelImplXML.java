@@ -4,6 +4,7 @@
  */
 package model;
 
+import controller.treecommand.TreeCommand;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -94,6 +95,21 @@ public class ModelImplXML implements IModel, Serializable {
             //  initCat(root, childs.item(i));
             //}
         }
+    }
+
+    @Override
+    public void treeBypass(TreeCommand command, ICategory rootCategory) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean checkUnique(ICategory rootCategory, ICategory searchCategory) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean checkUnique(ICategory rootCategory, Dish searchDish) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

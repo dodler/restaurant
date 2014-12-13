@@ -7,12 +7,12 @@ import java.util.UUID;
 public class CategoryImpl implements Serializable,ICategory {
     private UUID id;
     private String name;
-    private ArrayList<Dish> dishList = new ArrayList<Dish>();
-    private ArrayList<CategoryImpl> subCategoryList = new ArrayList<CategoryImpl>();
+    private ArrayList<Dish> dishList = new ArrayList<>();
+    private ArrayList<ICategory> subCategoryList = new ArrayList<>();
 
     /* КОНСТРУКТОРЫ */
     // Конструктор категории с указанными названием, списками блюд и дочерних категорий.
-    CategoryImpl(String name, ArrayList<Dish> dishList, ArrayList<CategoryImpl> categoryList) {
+    CategoryImpl(String name, ArrayList<Dish> dishList, ArrayList<ICategory> categoryList) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.dishList = dishList;
@@ -21,7 +21,7 @@ public class CategoryImpl implements Serializable,ICategory {
 
     // Конструктор категории с указанным названием.
     CategoryImpl(String name) {
-        this(name, new ArrayList<Dish>(), new ArrayList<CategoryImpl>());
+        this(name, new ArrayList<Dish>(), new ArrayList<ICategory>());
     }
 
 
@@ -42,7 +42,13 @@ public class CategoryImpl implements Serializable,ICategory {
     }
 
     // Метод получения списка дочерних категорий.
-    public ArrayList<CategoryImpl> getSubCategoryList() {
+
+    /**
+     *
+     * @return
+     */
+        @Override
+    public ArrayList<ICategory> getSubCategoryList() {
         return this.subCategoryList;
     }
 
@@ -64,8 +70,8 @@ public class CategoryImpl implements Serializable,ICategory {
 
 /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
     // Метод получения дочерней категории по имени.
-    public CategoryImpl getSubCategory(UUID ID) {
-        CategoryImpl subCategory = null;
+    public ICategory getSubCategory(UUID ID) {
+        ICategory subCategory = null;
         for (int i = 0; i < subCategoryList.size(); i++) {
             if (subCategoryList.get(i).getId() == ID) {
                 subCategory = subCategoryList.get(i);
@@ -109,6 +115,16 @@ public class CategoryImpl implements Serializable,ICategory {
     // Метод удаления блюда.
     public void removeDish(Dish dishForDelete) {
         dishList.remove(dishForDelete);
+    }
+
+    @Override
+    public void addCategory(ICategory newCategory) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removeCategory(ICategory categoryForDelete) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
