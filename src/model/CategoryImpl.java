@@ -1,5 +1,7 @@
 package model;
 
+import model.IncorrectCostException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -7,10 +9,13 @@ import java.util.UUID;
 public class CategoryImpl implements Serializable,ICategory {
     private UUID id;
     private String name;
-    private ArrayList<Dish> dishList = new ArrayList<Dish>();
-    private ArrayList<CategoryImpl> subCategoryList = new ArrayList<CategoryImpl>();
+    ArrayList<Dish> dishList = new ArrayList<Dish>();
+    ArrayList<CategoryImpl> subCategoryList = new ArrayList<CategoryImpl>();
 
-    /* КОНСТРУКТОРЫ */
+    private static ModelImpl model;
+    private CategoryImpl rootCategory = model.getRootCategory();
+
+/* КОНСТРУКТОРЫ */
     // Конструктор категории с указанными названием, списками блюд и дочерних категорий.
     CategoryImpl(String name, ArrayList<Dish> dishList, ArrayList<CategoryImpl> categoryList) {
         this.id = UUID.randomUUID();
