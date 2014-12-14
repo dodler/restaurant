@@ -50,12 +50,12 @@ public class ModelImpl implements IModel,Serializable {
     }
 
 
-    public boolean checkUnique(CategoryImpl rootCategory, CategoryImpl searchCategory){
-        for (int i = 0; i < rootCategory.subCategoryList.size();i++){
-            if (rootCategory.subCategoryList.get(i).getId() == searchCategory.getId()){
+    public boolean checkUnique(ICategory rootCategory, ICategory searchCategory){
+        for (int i = 0; i < rootCategory.getSubCategoryList().size();i++){
+            if (rootCategory.getSubCategoryList().get(i).getId() == searchCategory.getId()){
                 return false;
             } else {
-                if (!checkUnique(rootCategory.subCategoryList.get(i), searchCategory)){
+                if (!checkUnique(rootCategory.getSubCategoryList().get(i), searchCategory)){
                     return false;
                 }
             }
@@ -63,14 +63,14 @@ public class ModelImpl implements IModel,Serializable {
         return true;
     }
 
-    public boolean checkUnique(CategoryImpl rootCategory, Dish searchDish) {
-        for (int i = 0; i < rootCategory.subCategoryList.size(); i++) {
-            for (int j = 0; j < rootCategory.dishList.size(); j++) {
-                if (rootCategory.dishList.get(j).getId() == searchDish.getId()) {
+    public boolean checkUnique(ICategory rootCategory, Dish searchDish) {
+        for (int i = 0; i < rootCategory.getSubCategoryList().size(); i++) {
+            for (int j = 0; j < rootCategory.getDishList().size(); j++) {
+                if (rootCategory.getDishList().get(j).getId() == searchDish.getId()) {
                     return false;
                 }
             }
-            if (!checkUnique(rootCategory.subCategoryList.get(i), searchDish)) {
+            if (!checkUnique(rootCategory.getSubCategoryList().get(i), searchDish)) {
                 return false;
             }
         }
