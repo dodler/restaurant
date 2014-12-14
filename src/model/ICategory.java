@@ -5,7 +5,7 @@
  */
 package model;
 
-import model.exceptions.IncorrectCostException;
+import model.IncorrectCostException;
 
 import java.util.ArrayList;
 import java.util.UUID;
