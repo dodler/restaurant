@@ -64,13 +64,13 @@ public class ModelImpl implements IModel, Serializable {
     }
 
     public boolean checkUnique(ICategory rootCategory, Dish searchDish) {
-        for (int i = 0; i < rootCategory.getSubCategoryList().size(); i++) {
-            for (int j = 0; j < rootCategory.getDishList().size(); j++) {
-                if (rootCategory.getDishList().get(j).getId().equals(searchDish.getId())) {
+        for (ICategory category : rootCategory.getSubCategoryList()) {
+            for (Dish dish :  category.getDishList()) {
+                if (dish.getId() == searchDish.getId()) {
                     return false;
                 }
             }
-            if (!checkUnique(rootCategory.getSubCategoryList().get(i), searchDish)) {
+            if (!checkUnique(category, searchDish)) {
                 return false;
             }
         }

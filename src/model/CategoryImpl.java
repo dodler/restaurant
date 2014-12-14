@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class CategoryImpl implements Serializable,ICategory {
+public class CategoryImpl implements Serializable, ICategory {
     private UUID id;
     private String name;
-    private ArrayList<Dish> dishList = new ArrayList<>();
-    private ArrayList<ICategory> subCategoryList = new ArrayList<>();
+    private ArrayList<Dish> dishList = new ArrayList<Dish>();
+    private ArrayList<ICategory> subCategoryList = new ArrayList();
 
     /* КОНСТРУКТОРЫ */
     // Конструктор категории с указанными названием, списками блюд и дочерних категорий.
@@ -53,7 +53,7 @@ public class CategoryImpl implements Serializable,ICategory {
     }
 
     // Метод изменения списка дочерних категорий.
-    public void addSubCategoryList(ArrayList<CategoryImpl> categoryList) {
+    public void addSubCategoryList(ArrayList<ICategory> categoryList) {
         this.subCategoryList.addAll(categoryList);
     }
 
@@ -86,12 +86,12 @@ public class CategoryImpl implements Serializable,ICategory {
     }
 
     // Метод добавления дочерней категории по объекту.
-    public void addCategory(CategoryImpl newCategory){
+    public void addCategory(ICategory newCategory){
         subCategoryList.add(newCategory);
     }
 
     //  Метод удаления категории.
-    public void removeCategory(CategoryImpl categoryForDelete) {
+    public void removeCategory(ICategory categoryForDelete) {
         subCategoryList.remove(categoryForDelete);
     }
 

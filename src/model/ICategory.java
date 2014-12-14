@@ -24,7 +24,7 @@ public interface ICategory {
     public ArrayList<ICategory> getSubCategoryList();
 
     // Метод изменения списка дочерних категорий.
-    public void addSubCategoryList(ArrayList<CategoryImpl> categoryList);
+    public void addSubCategoryList(ArrayList<ICategory> categoryList);
 
     // Метод получения списка блюд.
     public ArrayList<Dish> getDishList();
