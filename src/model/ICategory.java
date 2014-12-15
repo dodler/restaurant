@@ -23,10 +23,10 @@ public interface ICategory {
     public void setName(String newName);
 
     // Метод получения списка дочерних категорий.
-    public ArrayList<CategoryImpl> getSubCategoryList();
+    public ArrayList<ICategory> getSubCategoryList();
 
     // Метод изменения списка дочерних категорий.
-    public void addSubCategoryList(ArrayList<CategoryImpl> categoryList);
+    public void addSubCategoryList(ArrayList<ICategory> categoryList);
 
     // Метод получения списка блюд.
     public ArrayList<Dish> getDishList();
@@ -37,16 +37,16 @@ public interface ICategory {
 
     /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
     // Метод получения дочерней категории по имени.
-    public CategoryImpl getSubCategory(UUID ID);
+    public ICategory getSubCategory(UUID ID);
 
     // Метод добавления дочерней категории по названию.
     public void addCategory(String name);
 
     // Метод добавления дочерней категории по объекту.
-    public void addCategory(CategoryImpl newCategory);
+    public void addCategory(ICategory newCategory);
 
     //  Метод удаления категории.
-    public void removeCategory(CategoryImpl categoryForDelete);
+    public void removeCategory(ICategory categoryForDelete);
 
 
     /* МЕТОДЫ ОПЕРАЦИЙ С БЛЮДАМИ */

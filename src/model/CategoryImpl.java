@@ -10,14 +10,14 @@ public class CategoryImpl implements Serializable,ICategory {
     private UUID id;
     private String name;
     ArrayList<Dish> dishList = new ArrayList<Dish>();
-    ArrayList<CategoryImpl> subCategoryList = new ArrayList<CategoryImpl>();
+    ArrayList<ICategory> subCategoryList = new ArrayList<ICategory>();
 
     private static ModelImpl model;
-    private CategoryImpl rootCategory = model.getRootCategory();
+    private ICategory rootCategory = model.getRootCategory();
 
 /* КОНСТРУКТОРЫ */
     // Конструктор категории с указанными названием, списками блюд и дочерних категорий.
-    CategoryImpl(String name, ArrayList<Dish> dishList, ArrayList<CategoryImpl> categoryList) {
+    CategoryImpl(String name, ArrayList<Dish> dishList, ArrayList<ICategory> categoryList) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.dishList = dishList;
@@ -26,7 +26,7 @@ public class CategoryImpl implements Serializable,ICategory {
 
     // Конструктор категории с указанным названием.
     CategoryImpl(String name) {
-        this(name, new ArrayList<Dish>(), new ArrayList<CategoryImpl>());
+        this(name, new ArrayList<Dish>(), new ArrayList<ICategory>());
     }
 
 
@@ -47,12 +47,12 @@ public class CategoryImpl implements Serializable,ICategory {
     }
 
     // Метод получения списка дочерних категорий.
-    public ArrayList<CategoryImpl> getSubCategoryList() {
+    public ArrayList<ICategory> getSubCategoryList() {
         return this.subCategoryList;
     }
 
     // Метод изменения списка дочерних категорий.
-    public void addSubCategoryList(ArrayList<CategoryImpl> categoryList) {
+    public void addSubCategoryList(ArrayList<ICategory> categoryList) {
         this.subCategoryList.addAll(categoryList);
     }
 
@@ -69,10 +69,10 @@ public class CategoryImpl implements Serializable,ICategory {
 
 /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
     // Метод получения дочерней категории по имени.
-    public CategoryImpl getSubCategory(UUID ID) {
-        CategoryImpl subCategory = null;
+    public ICategory getSubCategory(UUID ID) {
+        ICategory subCategory = null;
         for (int i = 0; i < subCategoryList.size(); i++) {
-            if (subCategoryList.get(i).getId() == ID) {
+            if (subCategoryList.get(i).getId().equals(ID)) {
                 subCategory = subCategoryList.get(i);
             }
         }
@@ -85,12 +85,12 @@ public class CategoryImpl implements Serializable,ICategory {
     }
 
     // Метод добавления дочерней категории по объекту.
-    public void addCategory(CategoryImpl newCategory){
+    public void addCategory(ICategory newCategory){
         subCategoryList.add(newCategory);
     }
 
     //  Метод удаления категории.
-    public void removeCategory(CategoryImpl categoryForDelete) {
+    public void removeCategory(ICategory categoryForDelete) {
         subCategoryList.remove(categoryForDelete);
     }
 

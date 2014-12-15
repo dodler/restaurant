@@ -23,8 +23,4 @@ public interface IModel {
 
     void treeBypass(TreeCommand command, ICategory rootCategory);
 
-    boolean checkUnique(ICategory rootCategory, ICategory searchCategory);
-
-    boolean checkUnique(ICategory rootCategory, Dish searchDish);
-
 }

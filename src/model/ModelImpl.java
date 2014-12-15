@@ -9,10 +9,10 @@ import controller.treecommand.TreeCommand;
 import java.io.*;
 
 public class ModelImpl implements IModel,Serializable {
-    private CategoryImpl rootCategory;
+    private ICategory rootCategory;
 
-    public CategoryImpl getRootCategory() {
-        if (rootCategory == null) {
+    public ICategory getRootCategory() {
+        if (rootCategory.equals(null)) {
             rootCategory =  new CategoryImpl("МЕНЮ");
         }
         return rootCategory;
@@ -50,9 +50,9 @@ public class ModelImpl implements IModel,Serializable {
     }
 
 
-    public boolean checkUnique(ICategory rootCategory, ICategory searchCategory){
+    private boolean checkUnique(ICategory rootCategory, ICategory searchCategory){
         for (int i = 0; i < rootCategory.getSubCategoryList().size();i++){
-            if (rootCategory.getSubCategoryList().get(i).getId() == searchCategory.getId()){
+            if (rootCategory.getSubCategoryList().get(i).getId().equals(searchCategory.getId())){
                 return false;
             } else {
                 if (!checkUnique(rootCategory.getSubCategoryList().get(i), searchCategory)){
@@ -63,10 +63,10 @@ public class ModelImpl implements IModel,Serializable {
         return true;
     }
 
-    public boolean checkUnique(ICategory rootCategory, Dish searchDish) {
+    private boolean checkUnique(ICategory rootCategory, Dish searchDish) {
         for (int i = 0; i < rootCategory.getSubCategoryList().size(); i++) {
             for (int j = 0; j < rootCategory.getDishList().size(); j++) {
-                if (rootCategory.getDishList().get(j).getId() == searchDish.getId()) {
+                if (rootCategory.getDishList().get(j).getId().equals(searchDish.getId())) {
                     return false;
                 }
             }
