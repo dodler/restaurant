@@ -12,8 +12,6 @@ public class CategoryImpl implements Serializable,ICategory {
     ArrayList<Dish> dishList = new ArrayList<Dish>();
     ArrayList<ICategory> subCategoryList = new ArrayList<ICategory>();
 
-    private static ModelImpl model;
-    private ICategory rootCategory = model.getRootCategory();
 
 /* КОНСТРУКТОРЫ */
     // Конструктор категории с указанными названием, списками блюд и дочерних категорий.
@@ -68,7 +66,7 @@ public class CategoryImpl implements Serializable,ICategory {
 
 
 /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
-    // Метод получения дочерней категории по имени.
+    // Метод получения дочерней категории по ID.
     public ICategory getSubCategory(UUID ID) {
         ICategory subCategory = null;
         for (int i = 0; i < subCategoryList.size(); i++) {
