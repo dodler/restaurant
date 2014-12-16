@@ -52,7 +52,7 @@ public class ConsoleViewImpl implements IConsoleView {
             sb.append("Блюдо ");
             sb.append(d.getName());
             sb.append(" стоит ");
-            sb.append(d.getCost());
+            sb.append(d.getPrice());
             out.println(sb.toString());
             sb.delete(0, sb.length());
         }
@@ -69,7 +69,7 @@ public class ConsoleViewImpl implements IConsoleView {
         sb.append("Блюдо ");
         sb.append(d.getName());
         sb.append(" стоит ");
-        sb.append(d.getCost());
+        sb.append(d.getPrice());
         out.println(sb.toString());
     }
 

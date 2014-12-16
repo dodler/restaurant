@@ -1,0 +1,8 @@
+<category id="-1" name="main">
+<dish id="1" name="hotdog" price="120.0"/>
+<dish id="3" name="sausage" price="60.0"/>
+<dish id="4" name="test" price="60.0"/>
+<category id="-2" name="hotfood">
+<dish id="2" name="borsh" price="300.0"/>
+</category>
+</category>

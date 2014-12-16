@@ -7,6 +7,7 @@ package controller;
 import controller.treecommand.CategoryFoundEvent;
 import controller.treecommand.CategoryParentFinder;
 import controller.treecommand.CategoryTreeFinder;
+import controller.treecommand.CategoryWriter;
 import controller.treecommand.ConsoleTreeWriter;
 import controller.treecommand.ConsoleTreeWriterPriced;
 import controller.treecommand.DishCategoryFinder;
@@ -27,7 +28,6 @@ import view.IConsoleView;
 public class ModelControllerImpl implements IModelController {
 
     private ICategory rootCategory;
-
     private IConsoleView view;
 
     /**
@@ -58,6 +58,8 @@ public class ModelControllerImpl implements IModelController {
     private void treeBypass(TreeCommand command, ICategory category) {
         if (command != null && category != null) {
             command.handle(category);
+        } else if (category == null) {
+            return;
         }
         if (category.getSubCategoryList().size() > 0) {
             for (ICategory c : category.getSubCategoryList()) {
@@ -67,30 +69,27 @@ public class ModelControllerImpl implements IModelController {
     }
 
     @Override
-    public void showCategoryDishTreePriced() {
+    public void showDishTreePriced() {
         treeBypass(new ConsoleTreeWriterPriced(view), rootCategory);
     }
 
     @Override
-    public void showCategoryDishTree() {
+    public void showDishTree() {
         this.treeBypass(new ConsoleTreeWriter(view), rootCategory);
-        // комментарий
     }
 
     @Override
-    public void showDishListPriced(String category) {
+    public void showDishTreePriced(String category) {
         /**
          * сделал наблюдатель для поиска при нахождении просто запускает событие
          */
         CategoryFoundEvent cfe = new CategoryFoundEvent() {
-
             @Override
             public void onCategoryFound() {
                 for (Dish d : cat.getDishList()) {
-                    view.show(cat);// вывод найденных блюд в категории 
+                    view.show(d);// вывод найденных блюд в категории 
                 }
             }
-
         };
 
         treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории 
@@ -98,23 +97,13 @@ public class ModelControllerImpl implements IModelController {
 
     }
 
-    private void delete(ICategory category, String name) {
-        for (Dish d : category.getDishList()) {
-            if (d.getName().equals(name)) {
-                category.getDishList().remove(d);
-            }
-        }
-    }
-
     @Override
     public void deleteDishCategory(String category) {
         CategoryFoundEvent cfe = new CategoryFoundEvent() {
-
             @Override
             public void onCategoryFound() {
                 cat.getDishList().clear(); // удаление блюд из найденной категории
             }
-
         };
         treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // запуск поиска плюс удаление
     }
@@ -122,7 +111,6 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void deleteCategory(final String category) {
         CategoryFoundEvent cfe = new CategoryFoundEvent() {
-
             @Override
             public void onCategoryFound() {
                 for (ICategory c : cat.getSubCategoryList()) {
@@ -147,7 +135,6 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void addDish(String category, final String name, final double price) {
         CategoryFoundEvent cfe = new CategoryFoundEvent() {
-
             @Override
             public void onCategoryFound() {
                 try {
@@ -156,7 +143,6 @@ public class ModelControllerImpl implements IModelController {
                     Logger.getLogger(ModelControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
         };
         treeBypass(new CategoryTreeFinder(category, cfe), rootCategory);
     }
@@ -164,12 +150,10 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void editCategoryName(final String oldName, final String newName) {
         CategoryFoundEvent cfe = new CategoryFoundEvent() {
-
             @Override
             public void onCategoryFound() {
                 cat.setName(newName);
             }
-
         };
         treeBypass(new CategoryTreeFinder(oldName, cfe), rootCategory);
     }
@@ -177,16 +161,14 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void editDishPrice(String name, final double newPrice) {
         DishFoundEvent dfe = new DishFoundEvent() {
-
             @Override
             public void onDishFound() {
                 try {
-                    d.setCost(newPrice);
+                    d.setPrice(newPrice);
                 } catch (Exception ex) {
                     Logger.getLogger(ModelControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
         };
         treeBypass(new DishTreeFinder(name, dfe), rootCategory);
     }
@@ -194,7 +176,6 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void editDishName(String oldName, final String newName) {
         DishFoundEvent dfe = new DishFoundEvent() {
-
             @Override
             public void onDishFound() {
                 try {
@@ -203,7 +184,6 @@ public class ModelControllerImpl implements IModelController {
                     Logger.getLogger(ModelControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
         };
         treeBypass(new DishTreeFinder(oldName, dfe), rootCategory);
     }
@@ -216,51 +196,51 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void deleteDish(final String name) {
         CategoryFoundEvent cfe = new CategoryFoundEvent() {
-
             @Override
             public void onCategoryFound() {
                 Iterator<Dish> dIt = cat.getDishList().iterator();
                 Dish d;
-                while(dIt.hasNext()){
+                while (dIt.hasNext()) {
                     d = dIt.next();
                     if (d.getName().equals(name)) {
                         dIt.remove();
                     }
                 }
             }
-
         };
         treeBypass(new DishCategoryFinder(name, cfe), rootCategory);
     }
 
     @Override
-    public void showDishList(String category){
+    public void showDishTree(String category) {
         /**
          * сделал наблюдатель для поиска при нахождении просто запускает событие
          */
         CategoryFoundEvent cfe = new CategoryFoundEvent() {
-
             @Override
             public void onCategoryFound() {
                 for (Dish d : cat.getDishList()) {
                     view.show("Блюдо" + d.getName());// вывод найденных блюд в категории 
                 }
             }
-
         };
 
         treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории 
         // с заданным именем
     }
-    
-    public void findName(String name) {
-        DishFoundEvent dfe = new DishFoundEvent() {
 
+    /**
+     * поиск блюда по имени
+     *
+     * @param name
+     */
+    public void findName(String name) {
+        DishFoundEvent dfe = new DishFoundEvent() {// обработчик нахождения блюда
             @Override
             public void onDishFound() {
-                view.show("Цена блюда " + d.getName() + " составляет " + d.getCost() + ". Идентификатор: " + d.getId());
-            }
+                view.show("Цена блюда " + d.getName() + " составляет " + d.getPrice() + ". Идентификатор: " + d.getId());
 
+            }
         };
         treeBypass(new DishTreeFinder(name, dfe), rootCategory);
     }
@@ -268,14 +248,12 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void findPriceMore(final double price) {
         DishFoundEvent dfe = new DishFoundEvent() {
-
             @Override
             public void onDishFound() {
-                if (d.getCost() > price) {
+                if (d.getPrice() > price) {
                     view.show(d);
                 }
             }
-
         };
         treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
@@ -283,14 +261,12 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void findPriceLess(final double price) {
         DishFoundEvent dfe = new DishFoundEvent() {
-
             @Override
             public void onDishFound() {
-                if (d.getCost() < price) {
+                if (d.getPrice() < price) {
                     view.show(d);
                 }
             }
-
         };
         treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
@@ -298,14 +274,12 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void findPriceEqual(final double price) {
         DishFoundEvent dfe = new DishFoundEvent() {
-
             @Override
             public void onDishFound() {
-                if (d.getCost() == price) {
+                if (d.getPrice() == price) {
                     view.show(d);
                 }
             }
-
         };
         treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
@@ -313,23 +287,22 @@ public class ModelControllerImpl implements IModelController {
     @Override
     public void findPriceInterval(final double left, final double right) {
         DishFoundEvent dfe = new DishFoundEvent() {
-
             @Override
             public void onDishFound() {
-                if (d.getCost() > left && d.getCost() < right) {
+                if (d.getPrice() > left && d.getPrice() < right) {
                     view.show(d);
                 }
             }
-
         };
         treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
 
     @Override
     public void findPattern(String pattern) {
+        // TODO поиск работает некорректно - рассмотреть случаи типа
+        // find n* - чтобы слова где n входит с разных сторон от * в одну выдачу не входили
         final String[] words = pattern.split("\\*"); // получили слова разделенные друг от друга 
         DishFoundEvent dfe = new DishFoundEvent() {
-
             @Override
             public void onDishFound() {
                 final String name = d.getName();
@@ -348,9 +321,30 @@ public class ModelControllerImpl implements IModelController {
                 }
 
             }
-
         };
         treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
 
+    @Override
+    public void showCategoryList() {
+        treeBypass(new CategoryWriter(view), rootCategory);
+    }
+
+    /**
+     * вывод подкатегорий категории категория задается именем cat производится
+     * сначала поиск категории потом вывод ее потомков работает крайне медленно,
+     * но работает
+     *
+     * @param cat - имя категории
+     */
+    @Override
+    public void showCategoryList(String cat) {
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
+            @Override
+            public void onCategoryFound() {
+                treeBypass(new CategoryWriter(view), this.cat);
+            }
+        };
+        treeBypass(new CategoryTreeFinder(cat, cfe), rootCategory);
+    }
 }

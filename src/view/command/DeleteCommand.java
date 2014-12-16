@@ -31,6 +31,7 @@ public class DeleteCommand extends CommandHandler {
                     break;
                 case "-n":
                     controller.deleteDish(arg[2]);
+                    break;
                 default:
                     throw new CommandSyntaxException("Ошибка ввода команды delete");
             }

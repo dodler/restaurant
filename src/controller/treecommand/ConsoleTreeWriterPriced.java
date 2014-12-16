@@ -34,7 +34,7 @@ public class ConsoleTreeWriterPriced extends TreeCommand{
             output.append(")-"); // может стоит переделать формат вывода
             output.append(d.getName());
             output.append(". Цена: ");
-            output.append(d.getCost());
+            output.append(d.getPrice());
             
             view.show(output.toString());
             output.replace(0, output.length(), "");

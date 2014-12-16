@@ -2,18 +2,33 @@ package model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.UUID;
+import java.util.Calendar;
 
 public class CategoryImpl implements Serializable,ICategory {
-    private UUID id;
+    private int id;
     private String name;
     private ArrayList<Dish> dishList = new ArrayList<>();
     private ArrayList<ICategory> subCategoryList = new ArrayList<>();
 
+    /**
+     * сравнение по ид
+     * @param o - объект - категория
+     * @return равенство ид
+     */
+    @Override
+    public boolean equals(Object o){
+        if (!o.getClass().equals(this.getClass())){
+            return false;
+        }
+        
+        return (((ICategory)o).getId() == this.id);
+        
+    }
+    
     /* КОНСТРУКТОРЫ */
     // Конструктор категории с указанными названием, списками блюд и дочерних категорий.
     CategoryImpl(String name, ArrayList<Dish> dishList, ArrayList<ICategory> categoryList) {
-        this.id = UUID.randomUUID();
+        this.id = (-1)*Calendar.getInstance().hashCode();
         this.name = name;
         this.dishList = dishList;
         this.subCategoryList = categoryList;
@@ -23,11 +38,17 @@ public class CategoryImpl implements Serializable,ICategory {
     CategoryImpl(String name) {
         this(name, new ArrayList<Dish>(), new ArrayList<ICategory>());
     }
+    
+    CategoryImpl(String name, int id){
+        this(name);
+        this.id = id;
+    }
 
 
 /* МЕТОДЫ ОПЕРАЦИЙ С ВЫДЕЛЕННОЙ КАТЕГОРИЕЙ */
     // Метод получения id категории.
-    public UUID getId() {
+    @Override
+    public int getId() {
         return this.id;
     }
 
@@ -53,11 +74,13 @@ public class CategoryImpl implements Serializable,ICategory {
     }
 
     // Метод изменения списка дочерних категорий.
+    @Override
     public void addSubCategoryList(ArrayList<CategoryImpl> categoryList) {
         this.subCategoryList.addAll(categoryList);
     }
 
     // Метод получения списка блюд.
+    @Override
     public ArrayList<Dish> getDishList() {
         return this.dishList;
     }
@@ -70,10 +93,10 @@ public class CategoryImpl implements Serializable,ICategory {
 
 /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
     // Метод получения дочерней категории по имени.
-    public ICategory getSubCategory(UUID ID) {
+    public ICategory getSubCategory(int id) {
         ICategory subCategory = null;
         for (int i = 0; i < subCategoryList.size(); i++) {
-            if (subCategoryList.get(i).getId() == ID) {
+            if (subCategoryList.get(i).getId() == id) {
                 subCategory = subCategoryList.get(i);
             }
         }
@@ -119,7 +142,7 @@ public class CategoryImpl implements Serializable,ICategory {
 
     @Override
     public void addCategory(ICategory newCategory) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.subCategoryList.add(newCategory);
     }
 
     @Override

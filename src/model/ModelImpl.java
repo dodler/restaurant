@@ -52,7 +52,7 @@ public class ModelImpl implements IModel, Serializable {
 
     public boolean checkUnique(ICategory rootCategory, ICategory searchCategory){
         for(ICategory category : rootCategory.getSubCategoryList()){
-            if (category.getId().equals(searchCategory.getId())) {
+            if (category.getId() ==searchCategory.getId()) {
                 return false;
             } else {
                 if (!checkUnique(category, searchCategory)){
@@ -66,7 +66,7 @@ public class ModelImpl implements IModel, Serializable {
     public boolean checkUnique(ICategory rootCategory, Dish searchDish) {
         for (int i = 0; i < rootCategory.getSubCategoryList().size(); i++) {
             for (int j = 0; j < rootCategory.getDishList().size(); j++) {
-                if (rootCategory.getDishList().get(j).getId().equals(searchDish.getId())) {
+                if (rootCategory.getDishList().get(j).getId() == searchDish.getId()) {
                     return false;
                 }
             }
