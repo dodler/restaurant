@@ -6,6 +6,7 @@
 package view.command;
 
 import controller.IModelController;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.IModel;
@@ -41,6 +42,15 @@ public class ModelManipulator extends CommandHandler {
                         model.loadFromFile(arg[2]);
                         // загрузка модели из файла
                     } catch (Exception ex) {
+                        Logger.getLogger(ModelManipulator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            case "save":
+                if (arg.length == 3) {
+                    try {
+                        model.saveToFile(arg[2]);
+                    } catch (IOException ex) {
                         Logger.getLogger(ModelManipulator.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }

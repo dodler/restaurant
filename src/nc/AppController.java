@@ -77,12 +77,6 @@ public class AppController{
             ch.showCorrectCommandFormat();
         }
         view.show("Введи help если захочешь снова лицезреть это");
-        
-        try {
-            model.saveToFile("test3.xml");
-        } catch (IOException ex) {
-            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     
     static{
