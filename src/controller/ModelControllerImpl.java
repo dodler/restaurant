@@ -18,9 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Dish;
 import model.ICategory;
-import model.IModel;
-import model.ModelImpl;
-import nc.AppController;
 import view.IConsoleView;
 
 /**
@@ -28,8 +25,6 @@ import view.IConsoleView;
  * @author Артем
  */
 public class ModelControllerImpl implements IModelController {
-
-    private IModel model = AppController.getModel();
 
     private ICategory rootCategory;
 
@@ -42,7 +37,6 @@ public class ModelControllerImpl implements IModelController {
      * @param rootCategory - ссылкана рутовую категорию
      */
     public ModelControllerImpl(ICategory rootCategory) {
-
         this.rootCategory = rootCategory;
     }
 
@@ -55,16 +49,31 @@ public class ModelControllerImpl implements IModelController {
         this.view = view;
     }
 
-// вырезал реализацию treeBypass в ModelImpl @Рома
+    /**
+     * метод обхода рекурсивного обхода дерева
+     *
+     * @param command - команда, которую нужно применить к текущему элементу
+     * @param category - категория с которой нужно начать обход
+     */
+    private void treeBypass(TreeCommand command, ICategory category) {
+        if (command != null && category != null) {
+            command.handle(category);
+        }
+        if (category.getSubCategoryList().size() > 0) {
+            for (ICategory c : category.getSubCategoryList()) {
+                treeBypass(command, c);
+            }
+        }
+    }
 
     @Override
     public void showCategoryDishTreePriced() {
-        model.treeBypass(new ConsoleTreeWriterPriced(view), rootCategory);
+        treeBypass(new ConsoleTreeWriterPriced(view), rootCategory);
     }
 
     @Override
     public void showCategoryDishTree() {
-        this.model.treeBypass(new ConsoleTreeWriter(view), rootCategory);
+        this.treeBypass(new ConsoleTreeWriter(view), rootCategory);
         // комментарий
     }
 
@@ -84,7 +93,7 @@ public class ModelControllerImpl implements IModelController {
 
         };
 
-        model.treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории
+        treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории 
         // с заданным именем
 
     }
@@ -107,7 +116,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // запуск поиска плюс удаление
+        treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // запуск поиска плюс удаление
     }
 
     @Override
@@ -123,7 +132,7 @@ public class ModelControllerImpl implements IModelController {
                 }
             }
         };
-        model.treeBypass(new CategoryParentFinder(category, cfe), rootCategory);
+        treeBypass(new CategoryParentFinder(category, cfe), rootCategory);
     }
 
     @Override
@@ -149,7 +158,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new CategoryTreeFinder(category, cfe), rootCategory);
+        treeBypass(new CategoryTreeFinder(category, cfe), rootCategory);
     }
 
     @Override
@@ -162,7 +171,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new CategoryTreeFinder(oldName, cfe), rootCategory);
+        treeBypass(new CategoryTreeFinder(oldName, cfe), rootCategory);
     }
 
     @Override
@@ -179,7 +188,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new DishTreeFinder(name, dfe), rootCategory);
+        treeBypass(new DishTreeFinder(name, dfe), rootCategory);
     }
 
     @Override
@@ -196,7 +205,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new DishTreeFinder(oldName, dfe), rootCategory);
+        treeBypass(new DishTreeFinder(oldName, dfe), rootCategory);
     }
 
     @Override
@@ -221,7 +230,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new DishCategoryFinder(name, cfe), rootCategory);
+        treeBypass(new DishCategoryFinder(name, cfe), rootCategory);
     }
 
     @Override
@@ -240,7 +249,7 @@ public class ModelControllerImpl implements IModelController {
 
         };
 
-        model.treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории
+        treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории 
         // с заданным именем
     }
     
@@ -253,7 +262,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new DishTreeFinder(name, dfe), rootCategory);
+        treeBypass(new DishTreeFinder(name, dfe), rootCategory);
     }
 
     @Override
@@ -268,7 +277,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new DishTreeFinder("", dfe), rootCategory);
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
 
     @Override
@@ -283,7 +292,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new DishTreeFinder("", dfe), rootCategory);
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
 
     @Override
@@ -298,7 +307,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new DishTreeFinder("", dfe), rootCategory);
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
 
     @Override
@@ -313,7 +322,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new DishTreeFinder("", dfe), rootCategory);
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
 
     @Override
@@ -341,7 +350,7 @@ public class ModelControllerImpl implements IModelController {
             }
 
         };
-        model.treeBypass(new DishTreeFinder("", dfe), rootCategory);
+        treeBypass(new DishTreeFinder("", dfe), rootCategory);
     }
 
 }

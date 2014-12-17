@@ -10,6 +10,8 @@ import view.IConsoleView;
 import view.command.exception.CommandSyntaxException;
 
 /**
+ * класс обработки команды вывода выводит на реализацию IConsoleView, которую
+ * надо задавать в конструкторе если введете просто show выдаст справку
  *
  * @author dodler
  */
@@ -21,26 +23,36 @@ public class ShowCommand extends CommandHandler {
 
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
+        if (arg.length < 2) {
+            this.showCorrectCommandFormat();
+            return;
+        }
         switch (arg[1]) {
             case "-d":
-                if (arg.length == 4 && arg[2].equals("-p")) {// c ценами
+                if (arg.length == 2) {
+                    controller.showDishTree(); // вывод названий всех блюд без цен вместе с категориями
+                    return;
+                }
+                if (arg[2].equals("-p")) {
                     if (arg.length == 4) {
-                        controller.showDishListPriced(arg[3]);
-                    } else {
-                        controller.showCategoryDishTreePriced(); // тоже но с ценами
+                        controller.showDishTreePriced(arg[3]);
+                    } else if (arg.length == 3) {
+                        controller.showDishTreePriced(); // тоже но с ценами
                     }
-                }else{
-                    if (arg.length == 3){
-                        controller.showDishList(arg[2]); // вывод из категории с с без цен
-                    }else{
-                        controller.showCategoryDishTree(); // вывод названий всех блюд без цен вместе с категориями
+                } else {
+                    if (arg.length == 3) {
+                        controller.showDishTree(arg[2]); // вывод из категории с с без цен
                     }
                 }
                 break;
             case "-c":
                 if (arg.length == 2) {
-                    view.show("доделать");
+                    controller.showCategoryList(); // вывод с рутовой категории
                     //controller.show
+                } else if (arg.length == 3) {
+                    controller.showCategoryList(arg[2]);
+                } else {
+                    throw new CommandSyntaxException(); // не подходит по числу аргументов
                 }
                 break;
             default:

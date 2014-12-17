@@ -7,19 +7,18 @@ package model;
 import controller.treecommand.TreeCommand;
 
 import java.io.*;
+import java.util.UUID;
 
-public class ModelImpl implements IModel,Serializable {
+public class ModelImpl implements IModel, Serializable {
     private ICategory rootCategory;
 
-    @Override
     public ICategory getRootCategory() {
-        if (rootCategory.equals(null)) {
+        if (rootCategory == null) {
             rootCategory =  new CategoryImpl("МЕНЮ");
         }
         return rootCategory;
     }
 
-    @Override
     public void saveToFile(String name) throws IOException {
         File file = new File(name);
         if (!file.exists()) file.createNewFile();
@@ -28,7 +27,6 @@ public class ModelImpl implements IModel,Serializable {
         out.close();
     }
 
-    @Override
     public void loadFromFile(String name) throws IOException {
         try {
             ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(name)));
@@ -41,8 +39,7 @@ public class ModelImpl implements IModel,Serializable {
 
 
     // Метод рекурсивного обхода дерева
-    @Override
-    public void treeBypass(ITreeCommand command, ICategory rootCategory) {
+    public void treeBypass(TreeCommand command, ICategory rootCategory) {
         if (command != null && rootCategory != null) {
             command.handle(rootCategory);
         }
@@ -53,13 +50,12 @@ public class ModelImpl implements IModel,Serializable {
         }
     }
 
-/*
-    private boolean checkUnique(ICategory rootCategory, ICategory searchCategory){
-        for (int i = 0; i < rootCategory.getSubCategoryList().size();i++){
-            if (rootCategory.getSubCategoryList().get(i).getId().equals(searchCategory.getId())){
+    public boolean checkUnique(ICategory rootCategory, ICategory searchCategory){
+        for(ICategory category : rootCategory.getSubCategoryList()){
+            if (category.getId().equals(searchCategory.getId())) {
                 return false;
             } else {
-                if (!checkUnique(rootCategory.getSubCategoryList().get(i), searchCategory)){
+                if (!checkUnique(category, searchCategory)){
                     return false;
                 }
             }
@@ -67,7 +63,7 @@ public class ModelImpl implements IModel,Serializable {
         return true;
     }
 
-    private boolean checkUnique(ICategory rootCategory, Dish searchDish) {
+    public boolean checkUnique(ICategory rootCategory, Dish searchDish) {
         for (int i = 0; i < rootCategory.getSubCategoryList().size(); i++) {
             for (int j = 0; j < rootCategory.getDishList().size(); j++) {
                 if (rootCategory.getDishList().get(j).getId().equals(searchDish.getId())) {
@@ -80,5 +76,5 @@ public class ModelImpl implements IModel,Serializable {
         }
         return true;
     }
-*/
+
 }

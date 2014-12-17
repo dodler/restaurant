@@ -19,7 +19,7 @@ public interface IModel {
 
     void saveToFile(String name) throws IOException;
 
-    void loadFromFile(String name) throws IOException;
+    void loadFromFile(String name) throws Exception;
 
     void treeBypass(ITreeCommand command, ICategory rootCategory);
 

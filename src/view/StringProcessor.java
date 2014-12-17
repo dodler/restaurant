@@ -45,6 +45,10 @@ public class StringProcessor {
         commandList.add(new RenameCommand(controller, view));
         commandList.add(new ShowCommand(controller, view));
     }
+    
+    public void addCommand(CommandHandler handler){
+        this.commandList.add(handler);
+    }
 
     /**
      * обработка слова

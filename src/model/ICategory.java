@@ -5,8 +5,6 @@
  */
 package model;
 
-import model.IncorrectCostException;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -26,7 +24,7 @@ public interface ICategory {
     public ArrayList<ICategory> getSubCategoryList();
 
     // Метод изменения списка дочерних категорий.
-    public void addSubCategoryList(ArrayList<ICategory> categoryList);
+    public void addSubCategoryList(ArrayList<CategoryImpl> categoryList);
 
     // Метод получения списка блюд.
     public ArrayList<Dish> getDishList();
@@ -36,8 +34,8 @@ public interface ICategory {
 
 
     /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
-    // Метод получения дочерней категории по ID.
-    public ICategory getSubCategory(UUID ID);
+    // Метод получения дочерней категории по имени.
+    public CategoryImpl getSubCategory(UUID ID);
 
     // Метод добавления дочерней категории по названию.
     public void addCategory(String name);

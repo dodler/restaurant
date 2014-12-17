@@ -1,5 +1,7 @@
 package controller;
 
+import model.ICategory;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,23 +13,34 @@ package controller;
  */
 public interface IModelController {
     
-    void showDishList(String category);
+    /**
+     * вывод всех категорий
+     */
+    void showCategoryList();
+    
+    /**
+     * вывод подкатегорий категории cat
+     * @param cat - имя категории, из которой нужно вывести
+     */
+    void showCategoryList(String cat);
+    
+    void showDishTree(String category);
     
     /**
      * вывод всех категорий и блюд с ценами
      */
-    void showCategoryDishTreePriced();
+    void showDishTreePriced();
 
     /**
      * вывод дерева категорий и блюд
      */
-    void showCategoryDishTree();
+    void showDishTree();
 
     /**
      * вывод всех блюд из категории с ценами
      * @param category - имя категории, из которой надо все вывести
      */
-    void showDishListPriced(String category);
+    void showDishTreePriced(String category);
 
     /**
      * удаляет блюдо. будет произведен поиск по всему дереву категорий

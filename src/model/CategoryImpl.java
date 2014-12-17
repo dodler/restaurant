@@ -1,7 +1,5 @@
 package model;
 
-import model.IncorrectCostException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -9,13 +7,12 @@ import java.util.UUID;
 public class CategoryImpl implements Serializable,ICategory {
     private UUID id;
     private String name;
-    ArrayList<Dish> dishList = new ArrayList<Dish>();
-    ArrayList<ICategory> subCategoryList = new ArrayList<ICategory>();
+    private ArrayList<Dish> dishList = new ArrayList<Dish>();
+    private ArrayList<CategoryImpl> subCategoryList = new ArrayList<CategoryImpl>();
 
-
-/* КОНСТРУКТОРЫ */
+    /* КОНСТРУКТОРЫ */
     // Конструктор категории с указанными названием, списками блюд и дочерних категорий.
-    CategoryImpl(String name, ArrayList<Dish> dishList, ArrayList<ICategory> categoryList) {
+    CategoryImpl(String name, ArrayList<Dish> dishList, ArrayList<CategoryImpl> categoryList) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.dishList = dishList;
@@ -24,7 +21,7 @@ public class CategoryImpl implements Serializable,ICategory {
 
     // Конструктор категории с указанным названием.
     CategoryImpl(String name) {
-        this(name, new ArrayList<Dish>(), new ArrayList<ICategory>());
+        this(name, new ArrayList<Dish>(), new ArrayList<CategoryImpl>());
     }
 
 
@@ -45,12 +42,12 @@ public class CategoryImpl implements Serializable,ICategory {
     }
 
     // Метод получения списка дочерних категорий.
-    public ArrayList<ICategory> getSubCategoryList() {
+    public ArrayList<CategoryImpl> getSubCategoryList() {
         return this.subCategoryList;
     }
 
     // Метод изменения списка дочерних категорий.
-    public void addSubCategoryList(ArrayList<ICategory> categoryList) {
+    public void addSubCategoryList(ArrayList<CategoryImpl> categoryList) {
         this.subCategoryList.addAll(categoryList);
     }
 
@@ -66,11 +63,11 @@ public class CategoryImpl implements Serializable,ICategory {
 
 
 /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
-    // Метод получения дочерней категории по ID.
-    public ICategory getSubCategory(UUID ID) {
-        ICategory subCategory = null;
+    // Метод получения дочерней категории по имени.
+    public CategoryImpl getSubCategory(UUID ID) {
+        CategoryImpl subCategory = null;
         for (int i = 0; i < subCategoryList.size(); i++) {
-            if (subCategoryList.get(i).getId().equals(ID)) {
+            if (subCategoryList.get(i).getId() == ID) {
                 subCategory = subCategoryList.get(i);
             }
         }
@@ -83,13 +80,12 @@ public class CategoryImpl implements Serializable,ICategory {
     }
 
     // Метод добавления дочерней категории по объекту.
-    public void addCategory(ICategory newCategory){
-
+    public void addCategory(CategoryImpl newCategory){
         subCategoryList.add(newCategory);
     }
 
     //  Метод удаления категории.
-    public void removeCategory(ICategory categoryForDelete) {
+    public void removeCategory(CategoryImpl categoryForDelete) {
         subCategoryList.remove(categoryForDelete);
     }
 
@@ -115,20 +111,4 @@ public class CategoryImpl implements Serializable,ICategory {
         dishList.remove(dishForDelete);
     }
 
-
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!obj.getClass().isAssignableFrom(this.getClass())) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        final CategoryImpl other = (CategoryImpl) obj;
-        return this.getId().equals(other.getId());
-    }
 }

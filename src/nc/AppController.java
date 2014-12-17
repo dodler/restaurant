@@ -13,14 +13,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.ParserConfigurationException;
 import model.IModel;
 import model.ModelImplXML;
-import org.xml.sax.SAXException;
 import view.CommandLineProcessor;
 import view.ConsoleViewImpl;
 import view.IConsoleView;
 import view.command.CommandHandler;
+import view.command.ModelManipulator;
 
 /**
  * AppController - синглтон.
@@ -64,12 +63,13 @@ public class AppController{
         IModel model = new ModelImplXML();
         try {
             model.loadFromFile(config.get(0));
-        } catch (ParserConfigurationException | SAXException | IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
         }
         IConsoleView view = new ConsoleViewImpl();
         ModelControllerImpl mci = new ModelControllerImpl(model.getRootCategory(), view);
         CommandLineProcessor clp = new CommandLineProcessor(System.in, mci, view);
+        clp.getCommandList().add(new ModelManipulator(controller, view, model));
         clp.start();
         view.show("Господин приветствую тебя. Позволь показать тебе доступные команды.");
         for(CommandHandler ch:clp.getCommandList()){
