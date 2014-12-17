@@ -7,12 +7,13 @@ package controller.treecommand;
 
 import model.ICategory;
 import view.IConsoleView;
+import model.ITreeCommand;
 
 /**
  *
  * @author dodler
  */
-public abstract class TreeCommand {
+public abstract class TreeCommand implements ITreeCommand {
     protected IConsoleView view;
     
     public TreeCommand(){

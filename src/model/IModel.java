@@ -21,6 +21,6 @@ public interface IModel {
 
     void loadFromFile(String name) throws IOException;
 
-    void treeBypass(TreeCommand command, ICategory rootCategory);
+    void treeBypass(ITreeCommand command, ICategory rootCategory);
 
 }

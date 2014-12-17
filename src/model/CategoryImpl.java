@@ -84,6 +84,7 @@ public class CategoryImpl implements Serializable,ICategory {
 
     // Метод добавления дочерней категории по объекту.
     public void addCategory(ICategory newCategory){
+
         subCategoryList.add(newCategory);
     }
 
@@ -114,4 +115,20 @@ public class CategoryImpl implements Serializable,ICategory {
         dishList.remove(dishForDelete);
     }
 
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!obj.getClass().isAssignableFrom(this.getClass())) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        final CategoryImpl other = (CategoryImpl) obj;
+        return this.getId().equals(other.getId());
+    }
 }

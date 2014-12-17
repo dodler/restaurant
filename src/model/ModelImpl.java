@@ -11,6 +11,7 @@ import java.io.*;
 public class ModelImpl implements IModel,Serializable {
     private ICategory rootCategory;
 
+    @Override
     public ICategory getRootCategory() {
         if (rootCategory.equals(null)) {
             rootCategory =  new CategoryImpl("МЕНЮ");
@@ -18,6 +19,7 @@ public class ModelImpl implements IModel,Serializable {
         return rootCategory;
     }
 
+    @Override
     public void saveToFile(String name) throws IOException {
         File file = new File(name);
         if (!file.exists()) file.createNewFile();
@@ -26,6 +28,7 @@ public class ModelImpl implements IModel,Serializable {
         out.close();
     }
 
+    @Override
     public void loadFromFile(String name) throws IOException {
         try {
             ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(name)));
@@ -37,8 +40,9 @@ public class ModelImpl implements IModel,Serializable {
     }
 
 
-    // Метод рекурсивного обхода дерева НЕ ОБРАЩАТЬ ВНИМАНИЯ! только начал разбираться
-    public void treeBypass(TreeCommand command, ICategory rootCategory) {
+    // Метод рекурсивного обхода дерева
+    @Override
+    public void treeBypass(ITreeCommand command, ICategory rootCategory) {
         if (command != null && rootCategory != null) {
             command.handle(rootCategory);
         }
@@ -49,7 +53,7 @@ public class ModelImpl implements IModel,Serializable {
         }
     }
 
-
+/*
     private boolean checkUnique(ICategory rootCategory, ICategory searchCategory){
         for (int i = 0; i < rootCategory.getSubCategoryList().size();i++){
             if (rootCategory.getSubCategoryList().get(i).getId().equals(searchCategory.getId())){
@@ -76,5 +80,5 @@ public class ModelImpl implements IModel,Serializable {
         }
         return true;
     }
-
+*/
 }

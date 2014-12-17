@@ -36,12 +36,11 @@ public class AppController{
     
     /**
      * в конструкторе будет 
-     * загрузка кофига из файла
+     * загрузка конфига из файла
      * загрузка базы данных
      * инициализация контроллера и вьюхи
      */
     private AppController(){
-        
         ArrayList<String> config = new ArrayList<>();
         BufferedReader reader = null;
         try {
