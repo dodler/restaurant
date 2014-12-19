@@ -26,10 +26,14 @@ public class ConsoleViewImpl implements IConsoleView {
         this.out = out;
     }
 
+    private String _show(ICategory cat) {
+        String result = "Категория: " + cat.getName();
+        result += " содержит " + cat.getDishList().size() + " блюд. ";
+        return result;
+    }
     @Override
     public void show(ICategory cat) {
-        out.print("Категория: " + cat.getName());
-        out.println(" содержит " + cat.getDishList().size() + " блюд. ");
+        out.println(this._show(cat));
     }
 
     @Override
@@ -38,24 +42,35 @@ public class ConsoleViewImpl implements IConsoleView {
         showDish(cat.getDishList());
     }
 
+    private String _show(ArrayList<ICategory> catList, String prefix) {
+        String result="";
+        for (ICategory cat : catList) {
+            result += prefix + _show(cat)+"\n";
+        }
+        return result;
+    }
     @Override
     public void show(ArrayList<ICategory> catList) {
-        for (ICategory cat : catList) {
-            show(cat);
-        }
+         out.println(this._show(catList,""));
     }
 
-    @Override
-    public void showDish(ArrayList<Dish> dishList) {
+    
+    private String _showDish(ArrayList<Dish> dishList, String prefix) {
         StringBuilder sb = new StringBuilder();
         for (Dish d : dishList) {
+            sb.append(prefix);
             sb.append("Блюдо ");
             sb.append(d.getName());
             sb.append(" стоит ");
             sb.append(d.getPrice());
-            out.println(sb.toString());
-            sb.delete(0, sb.length());
+            sb.append("\n");
         }
+        return sb.toString();
+    }
+    
+    @Override
+    public void showDish(ArrayList<Dish> dishList) {
+        out.println(this._showDish(dishList,""));
     }
 
     @Override
@@ -63,14 +78,54 @@ public class ConsoleViewImpl implements IConsoleView {
         out.println(source);
     }
 
-    @Override
-    public void show(Dish d) {
+    private String _show(Dish d){
         StringBuilder sb = new StringBuilder();
-        sb.append("Блюдо ");
+        sb.append("**Блюдо ");
         sb.append(d.getName());
         sb.append(" стоит ");
         sb.append(d.getPrice());
-        out.println(sb.toString());
+        sb.append("\n");
+        return  sb.toString();
+    }
+    
+    @Override
+    public void show(Dish d) {
+        out.println(this._show(d));
     }
 
+    public String _showTreeCategoryWithDishes(ICategory cat, String prefix){
+        String result = "";
+        ArrayList<ICategory> CategoryList = cat.getSubCategoryList();
+        if(CategoryList != null){
+            for (ICategory currentCategory : CategoryList) {
+                result += prefix+_show(currentCategory)+"\n";
+                result += _showTreeCategoryWithDishes(currentCategory, prefix+"_");
+                result += _showDish(currentCategory.getDishList(), prefix+"_");
+            }
+        }
+        else{
+            result += this._showDish(cat.getDishList(), prefix+"_");
+        }
+        return result;
+    }
+    
+    public void showTreeCategoryWithDishes(ICategory cat){
+        out.println(this._showTreeCategoryWithDishes(cat,""));
+    }
+    
+    public String _showTreeCategory(ICategory cat, String prefix){
+        String result = "";
+        ArrayList<ICategory> CategoryList = cat.getSubCategoryList();
+        if(CategoryList != null){
+            for (ICategory currentCategory : CategoryList) {
+                result += prefix+_show(currentCategory)+"\n";
+                result += _showTreeCategory(currentCategory, prefix+"_");
+            }
+        }
+        return result;
+    }
+    
+    public void showTreeCategory(ICategory cat){
+        out.println(this._showTreeCategory(cat,""));
+    }
 }
