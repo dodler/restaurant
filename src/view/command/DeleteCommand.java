@@ -21,6 +21,12 @@ public class DeleteCommand extends CommandHandler {
 
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
+        
+        if (arg.length < 2){
+            this.showCorrectCommandFormat();
+            throw new CommandSyntaxException("Недостаточно аргументов для команды delete");
+        }
+        
         if (arg.length == 3) {
             switch (arg[1]) {
                 case "-a":
@@ -50,7 +56,7 @@ public class DeleteCommand extends CommandHandler {
     public void showCorrectCommandFormat() {
         view.show("Формат команды: delete [опции] [значения]. \n"
                 + "Опции: -a - удаление блюд категории, \n-с - удаление категории с блюдами\n-n - удаление блюда по имени"
-                + "Значения: (-a) *name* - имя категории, в которой нужно удалять"
+                + "\nЗначения: (-a) *name* - имя категории, в которой нужно удалять"
                 + "\n(-c) *name* - имя категории, которую нужно удалить"
                 + "\n(-n) *name* - имя блюда, которое нужно удалить");
     }

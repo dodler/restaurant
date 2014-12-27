@@ -5,10 +5,16 @@
  */
 package view;
 
+import controller.treecommand.CategoryFoundEvent;
+import controller.treecommand.CategoryTreeFinder;
+import controller.treecommand.CategoryWriter;
+import controller.treecommand.ConsoleTreeWriter;
+import controller.treecommand.ConsoleTreeWriterPriced;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import model.Dish;
 import model.ICategory;
+import model.IModel;
 
 /**
  *
@@ -16,24 +22,96 @@ import model.ICategory;
  */
 public class ConsoleViewImpl implements IConsoleView {
 
+    private IModel model;
+    private ICategory rootCategory;
+    
+    /**
+     * вывод подкатегорий категории категория задается именем cat производится
+     * сначала поиск категории потом вывод ее потомков работает крайне медленно,
+     * но работает
+     *
+     * @param cat - имя категории
+     */
+    @Override
+    public void showCategoryList(String cat) {
+        final IConsoleView  view = this;
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
+            @Override
+            public void onCategoryFound() {
+                model.treeBypass(new CategoryWriter(view), this.cat);
+            }
+        };
+        model.treeBypass(new CategoryTreeFinder(cat, cfe), rootCategory);
+    }
+    
+    @Override
+    public void showCategoryList() {
+        model.treeBypass(new CategoryWriter(this), rootCategory);
+    }
+    
+    @Override
+    public void showDishTree(String category) {
+        /**
+         * сделал наблюдатель для поиска при нахождении просто запускает событие
+         */
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
+            @Override
+            public void onCategoryFound() {
+                for (Dish d : cat.getDishList()) {
+                    show("Блюдо" + d.getName());// вывод найденных блюд в категории 
+                }
+            }
+        };
+
+        model.treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории 
+        // с заданным именем
+    }
+    
+    @Override
+    public void showDishTreePriced() {
+        model.treeBypass(new ConsoleTreeWriterPriced(this), rootCategory);
+    }
+
+    @Override
+    public void showDishTree() {
+        model.treeBypass(new ConsoleTreeWriter(this), rootCategory);
+    }
+
+    @Override
+    public void showDishTreePriced(String category) {
+        /**
+         * сделал наблюдатель для поиска при нахождении просто запускает событие
+         */
+        CategoryFoundEvent cfe = new CategoryFoundEvent() {
+            @Override
+            public void onCategoryFound() {
+                for (Dish d : cat.getDishList()) {
+                    show(d);// вывод найденных блюд в категории 
+                }
+            }
+        };
+
+        model.treeBypass(new CategoryTreeFinder(category, cfe), rootCategory); // Запуск поиска по дереву категорий категории 
+        // с заданным именем
+
+    }
+    
     PrintStream out;
 
     public ConsoleViewImpl() {
         out = System.out;
     }
 
-    public ConsoleViewImpl(PrintStream out) {
+    public ConsoleViewImpl(PrintStream out, IModel model){
         this.out = out;
+        this.rootCategory = model.getRootCategory();
+        this.model = model;
     }
 
-    private String _show(ICategory cat) {
-        String result = "Категория: " + cat.getName();
-        result += " содержит " + cat.getDishList().size() + " блюд. ";
-        return result;
-    }
     @Override
     public void show(ICategory cat) {
-        out.println(this._show(cat));
+        out.print("Категория: " + cat.getName());
+        out.println(" содержит " + cat.getDishList().size() + " блюд. ");
     }
 
     @Override
@@ -42,35 +120,24 @@ public class ConsoleViewImpl implements IConsoleView {
         showDish(cat.getDishList());
     }
 
-    private String _show(ArrayList<ICategory> catList, String prefix) {
-        String result="";
-        for (ICategory cat : catList) {
-            result += prefix + _show(cat)+"\n";
-        }
-        return result;
-    }
     @Override
     public void show(ArrayList<ICategory> catList) {
-         out.println(this._show(catList,""));
+        for (ICategory cat : catList) {
+            show(cat);
+        }
     }
 
-    
-    private String _showDish(ArrayList<Dish> dishList, String prefix) {
+    @Override
+    public void showDish(ArrayList<Dish> dishList) {
         StringBuilder sb = new StringBuilder();
         for (Dish d : dishList) {
-            sb.append(prefix);
             sb.append("Блюдо ");
             sb.append(d.getName());
             sb.append(" стоит ");
             sb.append(d.getPrice());
-            sb.append("\n");
+            out.println(sb.toString());
+            sb.delete(0, sb.length());
         }
-        return sb.toString();
-    }
-    
-    @Override
-    public void showDish(ArrayList<Dish> dishList) {
-        out.println(this._showDish(dishList,""));
     }
 
     @Override
@@ -78,54 +145,14 @@ public class ConsoleViewImpl implements IConsoleView {
         out.println(source);
     }
 
-    private String _show(Dish d){
+    @Override
+    public void show(Dish d) {
         StringBuilder sb = new StringBuilder();
-        sb.append("**Блюдо ");
+        sb.append("Блюдо ");
         sb.append(d.getName());
         sb.append(" стоит ");
         sb.append(d.getPrice());
-        sb.append("\n");
-        return  sb.toString();
-    }
-    
-    @Override
-    public void show(Dish d) {
-        out.println(this._show(d));
+        out.println(sb.toString());
     }
 
-    public String _showTreeCategoryWithDishes(ICategory cat, String prefix){
-        String result = "";
-        ArrayList<ICategory> CategoryList = cat.getSubCategoryList();
-        if(CategoryList != null){
-            for (ICategory currentCategory : CategoryList) {
-                result += prefix+_show(currentCategory)+"\n";
-                result += _showTreeCategoryWithDishes(currentCategory, prefix+"_");
-                result += _showDish(currentCategory.getDishList(), prefix+"_");
-            }
-        }
-        else{
-            result += this._showDish(cat.getDishList(), prefix+"_");
-        }
-        return result;
-    }
-    
-    public void showTreeCategoryWithDishes(ICategory cat){
-        out.println(this._showTreeCategoryWithDishes(cat,""));
-    }
-    
-    public String _showTreeCategory(ICategory cat, String prefix){
-        String result = "";
-        ArrayList<ICategory> CategoryList = cat.getSubCategoryList();
-        if(CategoryList != null){
-            for (ICategory currentCategory : CategoryList) {
-                result += prefix+_show(currentCategory)+"\n";
-                result += _showTreeCategory(currentCategory, prefix+"_");
-            }
-        }
-        return result;
-    }
-    
-    public void showTreeCategory(ICategory cat){
-        out.println(this._showTreeCategory(cat,""));
-    }
 }

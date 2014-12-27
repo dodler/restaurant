@@ -32,6 +32,7 @@ public class CategoryParentFinder extends TreeCommand{
             if(cat.getName().equals(name)){
                 cfe.setCategory(category);
                 cfe.onCategoryFound();
+                return;
             }
         }
     }

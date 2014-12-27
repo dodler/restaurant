@@ -23,29 +23,48 @@ public class FindCommand extends CommandHandler {
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
         double price = 0, left = 0, right = 0;
-        if (arg.length <2){
+        if (arg.length < 2) {
+            this.showCorrectCommandFormat();
             throw new CommandSyntaxException("Слишком мало аргументов для команды find.");
         }
         switch (arg[1]) {
             case "-p":
                 try {
-                    price = Double.parseDouble(arg[3]);
+                    if (arg.length >= 4) {
+                        for (char c : arg[3].toCharArray()) {
+                            if (c > 57 || c < 48 && c != 46) {
+                                view.show("Неправильно введено число");
+                                return;
+                            }
+                        }
+                        left = price = Double.parseDouble(arg[3]);
+                    }
                     if (arg.length == 6) {
-                        left = price;
+                        for (char c : arg[5].toCharArray()) {
+                            if (c > 57 || c < 48 && c != 46) {
+                                view.show("Неправильно введено число");
+                                return;
+                            }
+                        }
                         right = Double.parseDouble(arg[5]);
+                    } else {
+                        throw new CommandSyntaxException("Слишком мало аргументов для команды find.");
                     }
                 } catch (NumberFormatException nfe) {
-                    view.show("Неправильно введено число. Сообщение об ошибке: ");
-                    view.show(nfe.getMessage());
-                    showCorrectCommandFormat();
+                    view.show("Неправильно введено число");
                 }
                 switch (arg[2]) {
-
                     case ">":
-                        if (arg.length == 3) {
-                            controller.findPriceMore(price);
-                        } else if (arg.length == 6) {
-                            controller.findPriceInterval(left, right);
+                        switch (arg.length) {
+                            case 4:
+                                controller.findPriceMore(price);
+                                break;
+                            case 6:
+                                if (left > right) {
+                                    throw new CommandSyntaxException("Неверные данные для команды. Обратите внимание на цены");
+                                }
+                                controller.findPriceInterval(left, right);
+                                break;
                         }
                         break;
                     case "<":
@@ -63,8 +82,11 @@ public class FindCommand extends CommandHandler {
                 break;
 
             case "-n":
-                controller.findPattern(arg[2]);
-                ;
+                if (arg.length == 3) {
+                    controller.findPattern(arg[2]);
+                } else {
+                    throw new CommandSyntaxException("Слишком мало аргументов для команды find.");
+                }
                 break;
             default:
                 throw new CommandSyntaxException();

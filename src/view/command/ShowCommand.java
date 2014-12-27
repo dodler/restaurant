@@ -19,38 +19,43 @@ public class ShowCommand extends CommandHandler {
 
     public ShowCommand(IModelController controller, IConsoleView view) {
         super(controller, view);
+        this.desc = "Формат команды: show [опции][значения]\n"
+                + "Опции: -d - вывод блюд\n-c - вывод категорий"
+                + "\n -p - необязательная опция - вывод цен на блюда\n"
+                + "Значения: (-a) *name* - необязательное значение, вывод блюд категории\n"
+                + "(-c) *name* - необязательное значение, вывод подкатегорий категории";
     }
 
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
         if (arg.length < 2) {
             this.showCorrectCommandFormat();
-            return;
+            throw new CommandSyntaxException("Недостаточно аргументов для команды show");
         }
         switch (arg[1]) {
             case "-d":
                 if (arg.length == 2) {
-                    controller.showDishTree(); // вывод названий всех блюд без цен вместе с категориями
+                    view.showDishTree(); // вывод названий всех блюд без цен вместе с категориями
                     return;
                 }
                 if (arg[2].equals("-p")) {
                     if (arg.length == 4) {
-                        controller.showDishTreePriced(arg[3]);
+                        view.showDishTreePriced(arg[3]);
                     } else if (arg.length == 3) {
-                        controller.showDishTreePriced(); // тоже но с ценами
+                        view.showDishTreePriced(); // тоже но с ценами
                     }
                 } else {
                     if (arg.length == 3) {
-                        controller.showDishTree(arg[2]); // вывод из категории с с без цен
+                        view.showDishTree(arg[2]); // вывод из категории с с без цен
                     }
                 }
                 break;
             case "-c":
                 if (arg.length == 2) {
-                    controller.showCategoryList(); // вывод с рутовой категории
+                    view.showCategoryList(); // вывод с рутовой категории
                     //controller.show
                 } else if (arg.length == 3) {
-                    controller.showCategoryList(arg[2]);
+                    view.showCategoryList(arg[2]);
                 } else {
                     throw new CommandSyntaxException(); // не подходит по числу аргументов
                 }
@@ -67,16 +72,12 @@ public class ShowCommand extends CommandHandler {
 
     @Override
     public void showCorrectCommandFormat() {
-        System.out.println("Формат команды: show [опции][значения]\n"
-                + "Опции: -d - вывод блюд\n-c - вывод категорий"
-                + "\n -p - необязательная опция - вывод цен на блюда"
-                + "Значения: (-a) *name* - необязательное значение, вывод блюд категории\n"
-                + "(-c) *name* - необязательное значение, вывод подкатегорий категории");
+        view.show(desc);
 
     }
 
     @Override
     public void showShortName() {
-        System.out.println("Пример. show -d -p - вывод всех блюд с ценами.");
+        view.show("Пример. show -d -p - вывод всех блюд с ценами.");
     }
 }

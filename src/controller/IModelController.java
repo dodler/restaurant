@@ -1,7 +1,5 @@
 package controller;
 
-import model.ICategory;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -12,35 +10,6 @@ import model.ICategory;
  * @author dodler
  */
 public interface IModelController {
-    
-    /**
-     * вывод всех категорий
-     */
-    void showCategoryList();
-    
-    /**
-     * вывод подкатегорий категории cat
-     * @param cat - имя категории, из которой нужно вывести
-     */
-    void showCategoryList(String cat);
-    
-    void showDishTree(String category);
-    
-    /**
-     * вывод всех категорий и блюд с ценами
-     */
-    void showDishTreePriced();
-
-    /**
-     * вывод дерева категорий и блюд
-     */
-    void showDishTree();
-
-    /**
-     * вывод всех блюд из категории с ценами
-     * @param category - имя категории, из которой надо все вывести
-     */
-    void showDishTreePriced(String category);
 
     /**
      * удаляет блюдо. будет произведен поиск по всему дереву категорий
@@ -76,8 +45,22 @@ public interface IModelController {
      *
      * @param category - категория, в которую нужно добавить блюдо
      * @param name - имя нового блюда
+     * @param price - цена блюда
      */
     void addDish(String category, String name, double price);
+    
+    /**
+     * добавление пустой категории в указанную категорию
+     * @param category - категория куда надо добавить
+     * @param name - имя категории
+     */
+    void addCategory(String category, String name);
+    
+    /**
+     * добавление пустой категории в корневую категорию
+     * @param name - имя новой пустой категории
+     */
+    void addCategory(String name);
     
     /**
      * метод переименования категории

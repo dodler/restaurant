@@ -67,7 +67,7 @@ public class AppController{
             Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
         }
         IConsoleView view = new ConsoleViewImpl();
-        ModelControllerImpl mci = new ModelControllerImpl(model.getRootCategory(), view);
+        ModelControllerImpl mci = new ModelControllerImpl(view, model);
         CommandLineProcessor clp = new CommandLineProcessor(System.in, mci, view);
         clp.getCommandList().add(new ModelManipulator(controller, view, model));
         clp.start();

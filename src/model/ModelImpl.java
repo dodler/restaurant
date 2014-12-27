@@ -7,11 +7,15 @@ package model;
 import controller.treecommand.TreeCommand;
 
 import java.io.*;
-import java.util.UUID;
 
 public class ModelImpl implements IModel, Serializable {
     private ICategory rootCategory;
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public ICategory getRootCategory() {
         if (rootCategory == null) {
             rootCategory =  new CategoryImpl("МЕНЮ");
@@ -19,6 +23,12 @@ public class ModelImpl implements IModel, Serializable {
         return rootCategory;
     }
 
+    /**
+     *
+     * @param name
+     * @throws IOException
+     */
+    @Override
     public void saveToFile(String name) throws IOException {
         File file = new File(name);
         if (!file.exists()) file.createNewFile();
@@ -27,6 +37,12 @@ public class ModelImpl implements IModel, Serializable {
         out.close();
     }
 
+    /**
+     *
+     * @param name
+     * @throws IOException
+     */
+    @Override
     public void loadFromFile(String name) throws IOException {
         try {
             ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(name)));
@@ -39,20 +55,34 @@ public class ModelImpl implements IModel, Serializable {
 
 
     // Метод рекурсивного обхода дерева
+
+    /**
+     *
+     * @param command
+     * @param rootCategory
+     */
+        @Override
     public void treeBypass(TreeCommand command, ICategory rootCategory) {
         if (command != null && rootCategory != null) {
             command.handle(rootCategory);
         }
-        if (rootCategory.getSubCategoryList().size() > 0) {
+        if (!rootCategory.getSubCategoryList().isEmpty()) {
             for (ICategory c : rootCategory.getSubCategoryList()) {
                 treeBypass(command, c);
             }
         }
     }
 
+    /**
+     *
+     * @param rootCategory
+     * @param searchCategory
+     * @return
+     */
+    @Override
     public boolean checkUnique(ICategory rootCategory, ICategory searchCategory){
         for(ICategory category : rootCategory.getSubCategoryList()){
-            if (category.getId().equals(searchCategory.getId())) {
+            if (category.getId() ==searchCategory.getId()) {
                 return false;
             } else {
                 if (!checkUnique(category, searchCategory)){
@@ -63,10 +93,17 @@ public class ModelImpl implements IModel, Serializable {
         return true;
     }
 
+    /**
+     *
+     * @param rootCategory
+     * @param searchDish
+     * @return
+     */
+    @Override
     public boolean checkUnique(ICategory rootCategory, Dish searchDish) {
         for (int i = 0; i < rootCategory.getSubCategoryList().size(); i++) {
             for (int j = 0; j < rootCategory.getDishList().size(); j++) {
-                if (rootCategory.getDishList().get(j).getId().equals(searchDish.getId())) {
+                if (rootCategory.getDishList().get(j).getId() == searchDish.getId()) {
                     return false;
                 }
             }

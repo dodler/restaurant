@@ -12,7 +12,7 @@ public interface ICategory {
 
     /* МЕТОДЫ ОПЕРАЦИЙ С ВЫДЕЛЕННОЙ КАТЕГОРИЕЙ */
     // Метод получения id категории.
-    public UUID getId();
+    public int getId();
 
     // Метод получения названия категории.
     public String getName();
@@ -35,7 +35,7 @@ public interface ICategory {
 
     /* МЕТОДЫ ОПЕРАЦИЙ С ДОЧЕРНИМИ КАТЕГОРИЯМИ */
     // Метод получения дочерней категории по имени.
-    public CategoryImpl getSubCategory(UUID ID);
+    public ICategory getSubCategory(int ID);
 
     // Метод добавления дочерней категории по названию.
     public void addCategory(String name);

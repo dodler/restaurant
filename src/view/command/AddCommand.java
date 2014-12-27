@@ -15,23 +15,42 @@ import view.command.exception.CommandSyntaxException;
  */
 public class AddCommand extends CommandHandler {
 
+    private String desc = "Формат команды: add [опции] [значения]\nОпции: -c - добавление категории, -d - блюда, [-n] - необязательная опция, родительская категория\nЗначения: *category* - необязательное значение, имя родительской категории. \n"
+            + "По умолчанию блюдо будет добавлено в главную категорию\n"
+            + "*name* - имя блюда, *price* - цена блюда.";
+
+    //"Пример. add -d борщ 12 - добавляет блюдо борщ с ценой 12 в главную категорию"
     public AddCommand(IModelController controller, IConsoleView view) {
         super(controller, view);
     }
 
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
+        if (arg.length < 2) {
+            throw new CommandSyntaxException("Слишком мало аргументов для команды add");
+        }
         switch (arg[1]) {
             case "-d":
                 // добавлениею определенного блюда из категории
-                if (arg.length == 5) {
-                    controller.addDish(arg[2], arg[3], Double.parseDouble(arg[4])); // добавление в указанную категорию
-                } else {
-                    controller.addDish(arg[2], Double.parseDouble(arg[3])); // добавление в родительскую категоирю
+                switch (arg.length) {
+                    case 6:
+                        controller.addDish(arg[3], arg[4], Double.parseDouble(arg[5])); // добавление в указанную категорию
+                        break;
+                    case 5:
+                        controller.addDish(arg[2], Double.parseDouble(arg[3])); // добавление в родительскую категоирю
+                        break;
+                    default:
+                        throw new CommandSyntaxException("Неверное число аргументов для команды add");
                 }
                 break;
             case "-c":
-                controller.addDish(arg[2], Double.parseDouble(arg[3]));
+                if (arg.length == 3) {
+                    controller.addCategory(arg[2]);
+                } else if (arg.length == 5 && arg[2].equals("-n")) {
+                    controller.addCategory(arg[3], arg[4]);
+                } else {
+                    throw new CommandSyntaxException("Неверное число аргументов для команды add");
+                }
                 break;
             default:
                 throw new CommandSyntaxException("Неверное число аргументов для команды add");
@@ -45,15 +64,11 @@ public class AddCommand extends CommandHandler {
 
     @Override
     public void showCorrectCommandFormat() {
-        view.show("Формат команды: add [опции] [значения]\nОпции: -c - добавление категории, -d - блюда\n"
-                + "Значения: (-n) *category* - имя родительской категории. \n"
-                + "(-c) *category* - не обязательное значение, категория, куда будет добавлено блюдо. \n"
-                + "По умолчанию блюдо будет добавлено в главную категорию\n"
-                + "*name* - имя блюда, *price* - цена блюда.");
+        view.show(desc);
     }
 
     @Override
     public void showShortName() {
-        view.show("Пример. add -d борщ 12 - добавляет блюдо борщ с ценой 12 в главную категорию");
+        view.show(ex);
     }
 }

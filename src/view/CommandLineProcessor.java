@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import view.command.CommandHandler;
-import view.command.ModelManipulator;
 import view.command.exception.CommandSyntaxException;
 
 /**

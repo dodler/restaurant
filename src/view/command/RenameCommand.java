@@ -26,7 +26,8 @@ public class RenameCommand extends CommandHandler {
      */
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
-        if (arg.length != 4){
+        if (arg.length < 4){
+            this.showCorrectCommandFormat();
             throw new CommandSyntaxException("Мало аргументов для команды rename");
         }
         switch (arg[1]) {

@@ -1,1 +1,2 @@
-/home/dodler/NetBeansProjects/MyController/test.xml
+model=/home/dodler/NetBeansProjects/MyController/test.xml
+log=testlog.txt

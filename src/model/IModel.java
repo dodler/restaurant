@@ -21,6 +21,10 @@ public interface IModel {
 
     void loadFromFile(String name) throws Exception;
 
-    void treeBypass(ITreeCommand command, ICategory rootCategory);
+    void treeBypass(TreeCommand command, ICategory rootCategory);
+
+    boolean checkUnique(ICategory rootCategory, ICategory searchCategory);
+
+    boolean checkUnique(ICategory rootCategory, Dish searchDish);
 
 }

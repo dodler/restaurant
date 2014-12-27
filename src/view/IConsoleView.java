@@ -16,6 +16,36 @@ import model.ICategory;
  * @author dodler
  */
 public interface IConsoleView {
+    
+    /**
+     * вывод всех категорий
+     */
+    void showCategoryList();
+    
+    /**
+     * вывод подкатегорий категории cat
+     * @param cat - имя категории, из которой нужно вывести
+     */
+    void showCategoryList(String cat);
+    
+    void showDishTree(String category);
+    
+    /**
+     * вывод всех категорий и блюд с ценами
+     */
+    void showDishTreePriced();
+
+    /**
+     * вывод дерева категорий и блюд
+     */
+    void showDishTree();
+
+    /**
+     * вывод всех блюд из категории с ценами
+     * @param category - имя категории, из которой надо все вывести
+     */
+    void showDishTreePriced(String category);
+    
     void show(ICategory cat);
     void showWithDishes(ICategory cat);
 
@@ -27,7 +57,5 @@ public interface IConsoleView {
     void showDish(ArrayList<Dish> dishList);
     void show(String source);
     void show(Dish d);
-    void showTreeCategoryWithDishes(ICategory cat);
-    void showTreeCategory(ICategory cat);
     
 }

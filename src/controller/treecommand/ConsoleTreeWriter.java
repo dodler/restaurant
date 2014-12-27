@@ -13,30 +13,34 @@ import view.IConsoleView;
  *
  * @author dodler
  */
-public class ConsoleTreeWriter extends TreeCommand{
+public class ConsoleTreeWriter extends TreeCommand {
 
     private StringBuilder categoryLevel = new StringBuilder();
     private StringBuilder output = new StringBuilder();
-    
-    public ConsoleTreeWriter(IConsoleView view){
+
+    public ConsoleTreeWriter(IConsoleView view) {
         super(view);
     }
-    
+
     @Override
-    public void handle(ICategory category){
+    public void handle(ICategory category) {
         categoryLevel.append("_:");
         output.append(categoryLevel);
         output.append(category.getName()); // для вывода имени категории с учетом уровня вложенности
         view.show(output.toString());
         output.replace(0, output.length(), "");
-        for(Dish d:category.getDishList()){
+        for (Dish d : category.getDishList()) {
             output.append(categoryLevel);
             output.append(")-"); // может стоит переделать формат вывода
             output.append(d.getName());
-            
+
             view.show(output.toString());
             output.replace(0, output.length(), "");
         }
+        if (category.getSubCategoryList().isEmpty()) {
+            categoryLevel.delete(categoryLevel.lastIndexOf("_"), categoryLevel.length()); // для корректного отображения 
+            // вложенных категорий
+        }
     }
-    
+
 }

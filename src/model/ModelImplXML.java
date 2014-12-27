@@ -41,7 +41,7 @@ public class ModelImplXML implements IModel, Serializable {
     private ArrayList<ICategory> totalCategoryList;
 
     private boolean isInited = false;
-
+    
     //TODO: нужно сделать сериализацию, и рут категорию
     @Override
     public ICategory getRootCategory() {
@@ -155,6 +155,7 @@ public class ModelImplXML implements IModel, Serializable {
                     for (Dish d : totalDishList) {
                         if (d.equals(newD)) {
                             isDuplicated = true;
+                            break;
                         }
                     }
                 }
@@ -211,11 +212,6 @@ public class ModelImplXML implements IModel, Serializable {
     }
 
     @Override
-    public void treeBypass(TreeCommand command, ICategory rootCategory) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public boolean checkUnique(ICategory rootCategory, ICategory searchCategory) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -233,6 +229,26 @@ public class ModelImplXML implements IModel, Serializable {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException ex) {
             Logger.getLogger(ModelImplXML.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * метод обхода рекурсивного обхода дерева
+     *
+     * @param command - команда, которую нужно применить к текущему элементу
+     * @param category - категория с которой нужно начать обход
+     */
+    @Override
+    public void treeBypass(TreeCommand command, ICategory category) {
+        if (command != null && category != null) {
+            command.handle(category);
+        } else if (category == null) {
+            return;
+        }
+        if (category.getSubCategoryList().size() > 0) {
+            for (ICategory c : category.getSubCategoryList()) {
+                treeBypass(command, c);
+            }
         }
     }
 

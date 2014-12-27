@@ -35,6 +35,10 @@ public class ModelManipulator extends CommandHandler {
 
     @Override
     public void handle(String[] arg) throws CommandSyntaxException {
+        if (arg.length < 2) {
+            this.showCorrectCommandFormat();
+            throw new CommandSyntaxException("Недостаточно аргументов для команды model");
+        }
         switch (arg[1]) {
             case "load":
                 if (arg.length == 3) {
@@ -50,12 +54,14 @@ public class ModelManipulator extends CommandHandler {
                 if (arg.length == 3) {
                     try {
                         model.saveToFile(arg[2]);
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
+                        view.show("Произошла ошибка во время записи данных в файл. Проверьте лог.");
                         Logger.getLogger(ModelManipulator.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 break;
             default:
+                this.showCorrectCommandFormat();
                 throw new CommandSyntaxException();
         }
     }
