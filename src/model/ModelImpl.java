@@ -29,7 +29,7 @@ public class ModelImpl implements IModel, Serializable {
      * @throws IOException
      */
     @Override
-    public void saveToFile(String name) throws IOException {
+    public void save(String name) throws IOException {
         File file = new File(name);
         if (!file.exists()) file.createNewFile();
         ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(name)));
@@ -43,7 +43,7 @@ public class ModelImpl implements IModel, Serializable {
      * @throws IOException
      */
     @Override
-    public void loadFromFile(String name) throws IOException {
+    public void load(String name) throws IOException {
         try {
             ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(name)));
             rootCategory = (CategoryImpl) in.readObject();

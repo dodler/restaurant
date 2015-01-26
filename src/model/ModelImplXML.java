@@ -49,7 +49,7 @@ public class ModelImplXML implements IModel, Serializable {
     }
     
     @Override
-    public void saveToFile(String name) throws IOException {
+    public void save(String name) throws IOException {
         BufferedWriter bw;
         bw = new BufferedWriter(new FileWriter(name));
         if (rootCategory != null) {
@@ -104,7 +104,7 @@ public class ModelImplXML implements IModel, Serializable {
     }
 
     @Override
-    public void loadFromFile(String name) throws ParserConfigurationException, SAXException, IOException {
+    public void load(String name) throws ParserConfigurationException, SAXException, IOException {
         File markupSource = new File(name);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

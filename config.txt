@@ -1,2 +1,3 @@
-model=/home/dodler/NetBeansProjects/MyController/test.xml
-log=testlog.txt
+address=192.168.10.12
+port=139
+logger=testlog.txt

@@ -13,13 +13,19 @@ import controller.treecommand.TreeCommand;
 
 import java.io.IOException;
 
+/**
+ * интерфейс модели
+ * модели данных могут быть разными
+ * например есть xml модель, модель с сериализацией
+ * @author lyan
+ */
 public interface IModel {
 
     ICategory getRootCategory();
 
-    void saveToFile(String name) throws IOException;
+    void save(String name) throws IOException;
 
-    void loadFromFile(String name) throws Exception;
+    void load(String name) throws Exception;
 
     void treeBypass(TreeCommand command, ICategory rootCategory);
 

@@ -43,7 +43,7 @@ public class ModelManipulator extends CommandHandler {
             case "load":
                 if (arg.length == 3) {
                     try {
-                        model.loadFromFile(arg[2]);
+                        model.load(arg[2]);
                         // загрузка модели из файла
                     } catch (Exception ex) {
                         Logger.getLogger(ModelManipulator.class.getName()).log(Level.SEVERE, null, ex);
@@ -53,7 +53,7 @@ public class ModelManipulator extends CommandHandler {
             case "save":
                 if (arg.length == 3) {
                     try {
-                        model.saveToFile(arg[2]);
+                        model.save(arg[2]);
                     } catch (Exception ex) {
                         view.show("Произошла ошибка во время записи данных в файл. Проверьте лог.");
                         Logger.getLogger(ModelManipulator.class.getName()).log(Level.SEVERE, null, ex);
