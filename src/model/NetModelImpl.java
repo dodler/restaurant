@@ -62,8 +62,6 @@ public class NetModelImpl implements IModel{
         socket = new Socket(InetAddress.getByName(ip), port);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        writer.write("Hello world!");
-        writer.flush();
     }
     
     /**
