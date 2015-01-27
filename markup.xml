@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<frame name="main" autoEnable="true" width="640" height="480">
+	<label
+		name = "test"
+		x = '250'
+		y = '350'
+		width = '100'
+		height = '30'
+		label = "Просто "
+	/>
+	<menuBar name = "menu">
+		<menu name = "1" label = "File">
+			<menuItem name = "11" label = "New" />
+			<menuItem name = "12" label = "Edit" />
+			<menuItem name = "13" label = "Save" />
+			<menuItem name = "14" label = "Save as" />
+		</menu>
+		<menu name = "2" label = "Edit">
+			<menuItem name = "21" label = "бла" />
+			<menuItem name = "22" label = "бла бла" />
+		</menu>
+		<menu name = "3" label = "View" />
+		<menu name = "4" label = "Help" />
+		<menu name = "5" label = "Exit" />
+	</menuBar>
+	
+</frame>

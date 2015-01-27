@@ -5,6 +5,7 @@
 package nc;
 
 import controller.IModelController;
+import haulmaunt.lyan.ui.markupexception.MissingMouseListenerException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,9 +14,11 @@ import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
 import model.IModel;
 import model.NetModelImpl;
 import view.IView;
+import view.SwingView;
 
 /**
  * AppController - синглтон.
@@ -30,36 +33,6 @@ public class AppController {
 
     static AppController instance;
 
-    class Config {
-
-        private BufferedReader reader;
-        private Map<String, String> conf;
-
-        public Config(String source) throws IOException {
-            reader = new BufferedReader(new FileReader(source));
-            conf = new HashMap<>();
-            String in;
-            String[] elms; // строчки разделенные символов = в конфиге
-            while ((in = reader.readLine()) != null) {
-                elms = in.split("=");
-                conf.put(elms[0], elms[1]);
-            }
-        }
-
-        /**
-         * метод доступа к параметрам конфига
-         *
-         * @param param - строчный параметр, которй требуется найти
-         * @return - значение параметра
-         */
-        public String get(String param) throws Exception {
-            if (conf.containsKey(param)) {
-                return conf.get(param);
-            } else {
-                throw new Exception();
-            }
-        }
-    }
     private Logger logger; // объект для логов
 
     {
@@ -90,6 +63,19 @@ public class AppController {
 
         try {
             model = new NetModelImpl(config.get("address"), Integer.parseInt(config.get("port")));
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+
+        IView view;
+        try {
+            view = new SwingView(config.get("xml-markup"));
+        } catch (IOException ioe) {
+            logger.log(Level.SEVERE, null, ioe);
+        } catch (ParserConfigurationException pce) {
+            logger.log(Level.SEVERE, null, pce);
+        } catch (MissingMouseListenerException mmle) {
+            logger.log(Level.SEVERE, null, mmle);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }

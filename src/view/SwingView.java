@@ -4,15 +4,40 @@
  */
 package view;
 
+import haulmaunt.lyan.ui.markupexception.MissingMouseListenerException;
+import java.io.IOException;
 import java.util.ArrayList;
+import javax.xml.parsers.ParserConfigurationException;
 import model.Dish;
 import model.ICategory;
+import ui.MarkupLoader;
 
 /**
+ * класс гуи для клиента справочной системы отображает содержимое меню в виде
+ * таблицы
  *
  * @author Артем
  */
 public class SwingView implements IView {
+
+    private MarkupLoader loader;
+
+    /**
+     * контструктор, который позволяет загрузить разметку xml, на основе которой
+     * будет построена программа
+     *
+     * @param xml - путь до файла xml c разметкой
+     * @throws java.io.IOException
+     * @throws javax.xml.parsers.ParserConfigurationException
+     * @throws haulmaunt.lyan.ui.markupexception.MissingMouseListenerException
+     */
+    public SwingView(String xml) throws IOException,
+            ParserConfigurationException, MissingMouseListenerException, Exception {
+        loader = new MarkupLoader();
+        loader.loadMarkup(xml);
+        
+        
+    }
 
     @Override
     public void showCategoryList() {
@@ -73,5 +98,5 @@ public class SwingView implements IView {
     public void show(Dish d) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

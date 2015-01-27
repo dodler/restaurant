@@ -10,6 +10,7 @@ import controller.treecommand.CategoryTreeFinder;
 import controller.treecommand.DishCategoryFinder;
 import controller.treecommand.DishFoundEvent;
 import controller.treecommand.DishTreeFinder;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +29,13 @@ public class ModelControllerImpl implements IModelController {
     private ICategory rootCategory;
     private IView view;
     private IModel model;
+    
+    private final ArrayList<Dish> list; // список блюд к показу
+    
+    // TODO переопределить методы показа в слушателях событий
+    // ибо там просто вывод тсроки
+    // надо сделать вывод табличных данных
+    // может стоит создать отдельный класс
 
     /**
      * конструктор контроллера создает контроллер с заданной рутовой категорией
@@ -37,6 +45,7 @@ public class ModelControllerImpl implements IModelController {
      */
     public ModelControllerImpl(ICategory rootCategory) {
         this.rootCategory = rootCategory;
+        list = new ArrayList<>();
     }
 
 
@@ -178,7 +187,9 @@ public class ModelControllerImpl implements IModelController {
         DishFoundEvent dfe = new DishFoundEvent() {// обработчик нахождения блюда
             @Override
             public void onDishFound() {
-                view.show("Цена блюда " + d.getName() + " составляет " + d.getPrice() + ". Идентификатор: " + d.getId());
+                list.add(d);
+                view.showDish(list);
+                list.clear();
             }
         };
         model.treeBypass(new DishTreeFinder(name, dfe), rootCategory);
