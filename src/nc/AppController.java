@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.IModel;
 import model.NetModelImpl;
-import view.IConsoleView;
+import view.IView;
 
 /**
  * AppController - синглтон.
@@ -24,7 +24,7 @@ import view.IConsoleView;
  */
 public class AppController {
 
-    private IConsoleView view;
+    private IView view;
     private IModel model;
     private IModelController controller;
 

@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<category name="main" id="-1">
-    <dish name="hotdog" price="120" id="1"/>
-    <category name="hotfood" id="-2">
-        <dish name="borsh"  price = "300" id="2"/>
-    </category>
-    <dish name="sausage" price = "60" id="3"/>
-    <dish name="test" price = "60" id="4"/>
-</category>

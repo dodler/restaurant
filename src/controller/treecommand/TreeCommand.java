@@ -6,20 +6,20 @@
 package controller.treecommand;
 
 import model.ICategory;
-import view.IConsoleView;
+import view.IView;
 
 /**
  *
  * @author dodler
  */
 public abstract class TreeCommand {
-    protected IConsoleView view;
+    protected IView view;
     
     public TreeCommand(){
         
     }
     
-    public TreeCommand(IConsoleView view){
+    public TreeCommand(IView view){
         this.view = view;
     }
     

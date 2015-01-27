@@ -7,7 +7,7 @@ package controller.treecommand;
 
 import model.Dish;
 import model.ICategory;
-import view.IConsoleView;
+import view.IView;
 
 /**
  *
@@ -18,7 +18,7 @@ public class ConsoleTreeWriter extends TreeCommand {
     private StringBuilder categoryLevel = new StringBuilder();
     private StringBuilder output = new StringBuilder();
 
-    public ConsoleTreeWriter(IConsoleView view) {
+    public ConsoleTreeWriter(IView view) {
         super(view);
     }
 

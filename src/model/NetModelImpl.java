@@ -30,54 +30,52 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * класс для загрузки модели с сервера
- * также имплементирует IModel как ModelImplXml
+ * класс для загрузки модели с сервера также имплементирует IModel как
+ * ModelImplXml
+ *
  * @author lyan
  */
-public class NetModelImpl implements IModel{
+public class NetModelImpl implements IModel {
 
     private int port; // порт по которому клиент будет соединяться с сервером
     private String ip; // соответствующий ип адрес
-    
     private ICategory root; // рутовая категория
-    
     private final Socket socket; // сокет соединения ксерверу
     private final BufferedReader reader; // объекты для чтения и записи запросов
     private final BufferedWriter writer;
-    
     private ArrayList<Dish> totalDishList;
     private ArrayList<ICategory> totalCategoryList;
-
     private boolean isInited = false; // флаг для проверки 
-    
     private Document doc; // переменная нужна для парсинга xml документа
-    
+
     /**
      * конструктор
+     *
      * @param ip - ip адрес для соединения с сервером через сокет
      * @param port - порт для соединения с сервером
      * @throws Exception - ошибка создания соединения/ просто подключения и т.д
      */
-    public NetModelImpl(String ip, int port) throws Exception{
+    public NetModelImpl(String ip, int port) throws Exception {
         socket = new Socket(InetAddress.getByName(ip), port);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
-    
+
     /**
-     * чтобы нельзя быол создавать пустой объект без заданных параметров соединения
+     * чтобы нельзя быол создавать пустой объект без заданных параметров
+     * соединения
      */
-    private NetModelImpl(){
+    private NetModelImpl() {
         socket = null;
         reader = null;
         writer = null;
     }
-    
+
     /**
-     * метод возвращает рутовую категорию
-     * которая позволяет манипулировать данными
-     * и производить навигацию
-     * @return 
+     * метод возвращает рутовую категорию которая позволяет манипулировать
+     * данными и производить навигацию
+     *
+     * @return
      */
     @Override
     public ICategory getRootCategory() {
@@ -86,6 +84,7 @@ public class NetModelImpl implements IModel{
 
     /**
      * метод загрузки данных на сервера
+     *
      * @param name - адрес сервера
      * @throws IOException - если загрузка не удалась
      */
@@ -99,25 +98,25 @@ public class NetModelImpl implements IModel{
         try {
             transformer = tf.newTransformer();
         } catch (TransformerConfigurationException ex) {
-            Logger.getLogger(ModelImplXML.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); // парсинг
         StringWriter writer = new StringWriter();
         try {
             transformer.transform(new DOMSource(doc), new StreamResult(writer));
         } catch (TransformerException ex) {
-            Logger.getLogger(ModelImplXML.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         String output = writer.getBuffer().toString().replaceAll(">", ">\n"); // фикс бага? для переноса строк
         writer.write(output); // запись в объект сокета
         writer.flush(); // очистка - отправка данных в сеть
     }
-    
+
     /**
-     * рекурсивный метод создания xml дерева из дерева категорий
-     * после полного прохода создается дерево xml в котором хранится дерево категорий
-     * грубо говоря переводит дерево категорий в xml дерево
-     * рутовый узел в doc
+     * рекурсивный метод создания xml дерева из дерева категорий после полного
+     * прохода создается дерево xml в котором хранится дерево категорий грубо
+     * говоря переводит дерево категорий в xml дерево рутовый узел в doc
+     *
      * @param node - xml узел
      * @param cat - узел дерева категорий блюд
      */
@@ -125,13 +124,13 @@ public class NetModelImpl implements IModel{
         Element e = doc.createElement("category"), dish, xmlCat; // это нужно только для рутовой категории
         e.setAttribute("name", cat.getName());
         e.setAttribute("id", Integer.toString(cat.getId()));
-        
-        if (cat.equals(root)){ // добавление рутовой категории в документ
+
+        if (cat.equals(root)) { // добавление рутовой категории в документ
             node.appendChild(e);
-        }else{
-            e = (Element)node;
+        } else {
+            e = (Element) node;
         }
-        
+
         for (Dish d : cat.getDishList()) {
             dish = doc.createElement("dish");
             dish.setAttribute("name", d.getName());
@@ -150,6 +149,7 @@ public class NetModelImpl implements IModel{
 
     /**
      * метод загрузки данных на сервер
+     *
      * @param name - адрес сервера
      * @throws Exception - если загрузка не удалась
      */
@@ -158,9 +158,21 @@ public class NetModelImpl implements IModel{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     *
+     * @param command
+     * @param rootCategory
+     */
     @Override
-    public void treeBypass(TreeCommand command, ICategory root) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void treeBypass(TreeCommand command, ICategory rootCategory) {
+        if (command != null && rootCategory != null) {
+            command.handle(rootCategory);
+        }
+        if (!rootCategory.getSubCategoryList().isEmpty()) {
+            for (ICategory c : rootCategory.getSubCategoryList()) {
+                treeBypass(command, c);
+            }
+        }
     }
 
     @Override
@@ -172,5 +184,4 @@ public class NetModelImpl implements IModel{
     public boolean checkUnique(ICategory root, Dish searchDish) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
 }
