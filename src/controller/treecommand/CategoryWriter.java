@@ -5,7 +5,7 @@
 package controller.treecommand;
 
 import model.ICategory;
-import view.IConsoleView;
+import view.IView;
 
 /**
  *
@@ -13,7 +13,7 @@ import view.IConsoleView;
  */
 public class CategoryWriter extends TreeCommand{
 
-    public CategoryWriter(IConsoleView view){
+    public CategoryWriter(IView view){
         super(view);
     }
     

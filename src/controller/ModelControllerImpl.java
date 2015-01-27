@@ -17,7 +17,7 @@ import model.CategoryImpl;
 import model.Dish;
 import model.ICategory;
 import model.IModel;
-import view.IConsoleView;
+import view.IView;
 
 /**
  *
@@ -26,7 +26,7 @@ import view.IConsoleView;
 public class ModelControllerImpl implements IModelController {
 
     private ICategory rootCategory;
-    private IConsoleView view;
+    private IView view;
     private IModel model;
 
     /**
@@ -40,13 +40,13 @@ public class ModelControllerImpl implements IModelController {
     }
 
 
-    public ModelControllerImpl(IConsoleView view, IModel model) {
+    public ModelControllerImpl(IView view, IModel model) {
         this(model.getRootCategory());
         this.view = view;
         this.model = model;
     }
 
-    public void setView(IConsoleView view) {
+    public void setView(IView view) {
         this.view = view;
     }
 

@@ -15,7 +15,7 @@ import model.ICategory;
  *
  * @author dodler
  */
-public interface IConsoleView {
+public interface IView {
     
     /**
      * вывод всех категорий
