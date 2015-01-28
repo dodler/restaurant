@@ -8,7 +8,6 @@ package model;
 import controller.treecommand.TreeCommand;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -112,6 +111,25 @@ public class NetModelImpl implements IModel {
         writer.flush(); // очистка - отправка данных в сеть
     }
 
+    /**
+     * обновление категории на сервере
+     * @param id - и
+     * @param name- имя категории
+     */
+    public void update(int id, String name){
+        
+    }
+    
+    /**
+     * обновление цены
+     * @param id
+     * @param name
+     * @param price 
+     */
+    public void update(int id, String name, double price){
+        
+    }
+    
     /**
      * рекурсивный метод создания xml дерева из дерева категорий после полного
      * прохода создается дерево xml в котором хранится дерево категорий грубо

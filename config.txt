@@ -1,4 +1,4 @@
 address=192.168.10.12
 port=139
-logger=testlog.txt
+logger=testlog.log
 xml-markup=markup.xml
