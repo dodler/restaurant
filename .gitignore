@@ -23,4 +23,5 @@ tmp/
 /.nb-gradle/profiles/private/
 /nbproject/*
 /build/
-*.log
+*.log.*
+*.log*

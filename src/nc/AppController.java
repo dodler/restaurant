@@ -6,11 +6,7 @@ package nc;
 
 import controller.IModelController;
 import haulmaunt.lyan.ui.markupexception.MissingMouseListenerException;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,9 +26,7 @@ public class AppController {
     private IView view;
     private IModel model;
     private IModelController controller;
-
     static AppController instance;
-
     private Logger logger; // объект для логов
 
     {
@@ -106,6 +100,5 @@ public class AppController {
      * метод запускает справочную систему
      */
     public void run() {
-
     }
 }

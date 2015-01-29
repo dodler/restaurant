@@ -46,7 +46,7 @@ public class NetModelImpl implements IModel {
     private ArrayList<ICategory> totalCategoryList;
     private boolean isInited = false; // флаг для проверки 
     private Document doc; // переменная нужна для парсинга xml документа
-
+    private XMLRequestGenerator xmlrg;
     /**
      * конструктор
      *
@@ -58,6 +58,7 @@ public class NetModelImpl implements IModel {
         socket = new Socket(InetAddress.getByName(ip), port);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        xmlrg = XMLRequestGenerator.getInstance();
     }
 
     /**
@@ -113,21 +114,32 @@ public class NetModelImpl implements IModel {
 
     /**
      * обновление категории на сервере
-     * @param id - и
-     * @param name- имя категории
+     * те смена названия блюда
+     * @param cat - категория, которую нужно обновлять с изменениями
      */
-    public void update(int id, String name){
-        
+    public void update(ICategory cat) throws IOException{
+        xmlrg.putCategory(cat, XMLRequestGenerator.RequestType.U);
+        try {
+            writer.write(xmlrg.getRequest());
+        } catch (IOException ex) {
+            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        }
     }
     
     /**
-     * обновление цены
-     * @param id
-     * @param name
-     * @param price 
+     * обновление блюда
+     * те смена цены или названия
+     * @param d - блюдо, которое нужно обновить
      */
-    public void update(int id, String name, double price){
-        
+    public void update(Dish d) throws IOException{
+        xmlrg.putDish(d, XMLRequestGenerator.RequestType.U);
+        try {
+            writer.write(xmlrg.getRequest());
+        } catch (IOException ex) {
+            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        }
     }
     
     /**
