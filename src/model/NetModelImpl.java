@@ -143,6 +143,34 @@ public class NetModelImpl implements IModel {
     }
     
     /**
+     * добавление категории в дерево на сервер
+     * @param cat - новая категория
+     * @param parentID - ид родительской категории
+     */
+    public void add(ICategory cat, int parentID) throws IOException{
+        xmlrg.putCategory(cat, XMLRequestGenerator.RequestType.A, parentID);
+        try{
+            writer.write(xmlrg.getRequest());
+            
+        }catch(IOException ioe){
+            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ioe);
+            throw ioe;
+        }
+    }
+    
+    public void add(Dish d, int parentID) throws IOException{
+        xmlrg.putDish(d, XMLRequestGenerator.RequestType.A, parentID);
+        try{
+            writer.write(xmlrg.getRequest());
+        }catch(IOException ioe){
+            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ioe);
+            throw ioe;
+        }
+    }
+    
+    
+    
+    /**
      * рекурсивный метод создания xml дерева из дерева категорий после полного
      * прохода создается дерево xml в котором хранится дерево категорий грубо
      * говоря переводит дерево категорий в xml дерево рутовый узел в doc
