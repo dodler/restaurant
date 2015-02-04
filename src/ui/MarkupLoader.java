@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.table.TableModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -197,7 +199,7 @@ public class MarkupLoader {
      *
      * @param ml - слушатель событий
      */
-    public void addMouseListenerInstance(MouseListener ml) {
+    public void addMouseListener(MouseListener ml) {
         mouseListeners.put(ml.getClass().getSimpleName(), ml);
     }
 
@@ -207,22 +209,12 @@ public class MarkupLoader {
      * @param name - имя слушателя событий
      * @param ml - слушатель событий
      */
-    public void addMouseListenerInstanceByName(String name, MouseListener ml) {
+    public void addMouseListener(String name, MouseListener ml) {
         mouseListeners.put(name, ml);
     }
 
     public void removeMouseListenerInstance(String name) {
         mouseListeners.remove(name);
-    }
-
-    /**
-     * возвращает визуальный компонент, указанный в xml разметке
-     *
-     * @param name - имя компонента
-     * @return Component - ссылку на визуальный объект
-     */
-    public Component getComponentByName(String name) {
-        return components.get(name);
     }
 
     public MarkupLoader() {
@@ -284,14 +276,14 @@ public class MarkupLoader {
             throw new NoSuchElementException();  // если его нету
         }
     }
-    
+
     private Container p;
-    
-    public void setParent(Container p){
+
+    public void setParent(Container p) {
         this.p = p;
     }
-    
-    public Container getParent(){
+
+    public Container getParent() {
         return this.p;
     }
 
@@ -325,7 +317,7 @@ public class MarkupLoader {
             if (attributes == null) {
                 continue; // если атрибутов нет то смысла продолджать нету
             }
-
+            mlpc.rows = convertNodeToString(attributes, "rows");
             mlpc.model = convertNodeToString(attributes, "model");
             mlpc.fontStyle = convertNodeToString(attributes, "fontStyle");
             mlpc.fontSize = convertNodeToString(attributes, "fontSize");
@@ -346,16 +338,60 @@ public class MarkupLoader {
             mlpc.mouseListener = convertNodeToString(attributes, "mouseListener");
             mlpc.nodeName = currentComponents.item(i).getNodeName();
             mlpc.iconUrl = convertNodeToString(attributes, "iconURL");
-            
-            
-            System.out.println(mlpc.nodeName);
-            for (IUiAcceptor iua : uiAcList) {
-                if (iua.isApplicable(mlpc.nodeName)) {
-                    initMarkup(iua.acceptUI(mlpc, parent, components, this), currentComponents.item(i));
-                }
+            mlpc.transparent = convertNodeToString(attributes, "transparent");
+
+            switch (mlpc.nodeName) {
+
+                case "menuBar":
+
+                    initMarkup(new MenuBarAcceptor().acceptUI(mlpc, parent, components, this), currentComponents.item(i));
+
+                    break;
+
+                case "menuItem":
+                    new MenuItemAcceptor().acceptUI(mlpc, parent, components, this);
+                    break;
+
+                case "menu":
+                    initMarkup(new MenuAcceptor().acceptUI(mlpc, parent, components, this), currentComponents.item(i));
+
+                    break;
+
+                case "label":
+                    new LabelAcceptor().acceptUI(mlpc, parent, components, this);
+                    break;
+
+                case "text":
+                    new TextAcceptor().acceptUI(mlpc, parent, components, this);
+
+                    break;
+
+                case "frame":
+                    // тут можно создать родительское окно
+                    // не до конца еще знаю gui api java поэтому считаю что можно создать несколько фреймов
+
+                    initMarkup((JFrame) new FrameAcceptor().acceptUI(mlpc, parent, components, this), currentComponents.item(i)); // элемент может содрежать дочерние элементы, поэтому запускаем рекурсивную обработку "детей"
+
+                    break;
+                case "button":
+                    new ButtonAcceptor().acceptUI(mlpc, parent, components, this);
+
+                    break;
+                case "dialog":
+
+                    initMarkup((JDialog) new DialogAcceptor().acceptUI(mlpc, parent, components, this), currentComponents.item(i));
+
+                    break;
+                case "table": // обработка таблиц
+                    new TableAcceptor().acceptUI(mlpc, parent, components, this);
+
+                    break;
+                default:
             }
-            /*
-             if (t != null) {
+            if (parent != null){
+                parent.repaint();
+            }
+            /*if (t != null) {
              if (!fontName.equals("")) {
              t.setFont(new Font(fontName, Integer.parseInt(fontStyle), Integer.parseInt(fontSize))); // ставим новый шрифт
              }
@@ -369,17 +405,13 @@ public class MarkupLoader {
              t.setName(name); // это свойство общее для всех компонентов
              }
              }*/
-            //
-            if (parent != null) {
-                parent.repaint();
-            }
         }
     }
 
     private String convertNodeToString(NamedNodeMap attributes, String pattern) {
         if (attributes.getNamedItem(pattern) != null) { // получаем имя класса
             return attributes.getNamedItem(pattern).getTextContent();
-        }else if (pattern.equals("x") || pattern.equals("y") || pattern.equals("width") || pattern.equals("height")){
+        } else if (pattern.equals("x") || pattern.equals("y") || pattern.equals("width") || pattern.equals("height")) {
             return "0";
         } else {
             return "";

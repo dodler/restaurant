@@ -18,10 +18,12 @@ public class MarkupLoaderPropertiesContainer {
         return instance;
     }
     
-    public String model;
-    public String iconUrl;
-    public String nodeName;
-    public String fontStyle;
+    public String transparent; // прозрачность кнопки
+    public String rows; // названия столбцов таблицы
+    public String model;// модель таблицы
+    public String iconUrl; // адрес иконки для кнопки
+    public String nodeName; // имя узла
+    public String fontStyle; // пока не испльзовано
     public String fontSize;
     public String fontName;
     public String focusable;

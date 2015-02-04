@@ -6,6 +6,7 @@
 package ui.acceptors;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class FrameAcceptor extends IUiAcceptor {
     }
 
     @Override
-    public Component acceptUI(MarkupLoaderPropertiesContainer mlpc, Component parent, HashMap<String, Component> components, MarkupLoader ml)  throws Exception{
+    public Component acceptUI(MarkupLoaderPropertiesContainer mlpc, Component parent, HashMap<String, Component> components, MarkupLoader ml) throws Exception {
         // тут можно создать родительское окно
         // не до конца еще знаю gui api java поэтому считаю что можно создать несколько фреймов
         if ((mlpc.className.equals("JFrame") || mlpc.className.equals("")) && !ml.containsFrameClass(mlpc.className)) {
@@ -64,8 +65,11 @@ public class FrameAcceptor extends IUiAcceptor {
             default:
                 ((JFrame) t).setLayout(null); // выбираем тип разметки
         }
+        if (!mlpc.backgroundColor.equals("")) {
+            ((JFrame) t).setBackground(Color.getColor(mlpc.backgroundColor));
+        }
         ((JFrame) t).setVisible(Boolean.parseBoolean(mlpc.autoEnable)); // можно сразу сделать окно доступным
-        ml.setParent((Container)t);
+        ml.setParent((Container) t);
         components.put(mlpc.name, t);
         return t;
     }

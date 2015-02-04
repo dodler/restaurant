@@ -7,17 +7,25 @@ package ui.acceptors;
 
 import java.awt.Component;
 import java.awt.Container;
-import static java.lang.Compiler.enable;
 import java.util.HashMap;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
-import static jdk.nashorn.internal.codegen.CompilerConstants.className;
 import ui.MarkupLoader;
 
 /**
- *
+ * создание таблицы
+ * поддерживаются теги
+ * автоматически будет добавлена прокрутка,если не хватает длины
+ * autoEnable - сразу инициализируется
+ * className - класс таблицы, которым будет инициализирована таблица
+ * по умолчанию - JTable
+ * model - модель таблицы, нужно просто укзаать имя, которое потом нужно будет добавить в MarkupLoader
+ * указывать необязательно, по умолчанию добавляется DefaultTableModel
+ * x - координата таблицы по х
+ * у - координата таблицы по y
+ * width - длина таблицы
+ * height - высота таблицы
  * @author lyan
  */
 public class TableAcceptor extends IUiAcceptor {
@@ -47,20 +55,29 @@ public class TableAcceptor extends IUiAcceptor {
             ((JTable) t1).setModel(new DefaultTableModel());
             //throw new MissingTableModelException(); // то выбрасываем исключение
         }
+        
+        if (mlpc.rows != null){
+            String[] columnNames = mlpc.rows.split(";");
+            DefaultTableModel dtm = new DefaultTableModel();
+            for(String s:columnNames){
+                dtm.addColumn(s);
+            }
+            ((JTable)t1).setModel(dtm);
+        }
 
         if (enable) {
             t = new JScrollPane((JTable) t1); // если нужно добавляем в скрол пейн
         } else {
             t = t1; // иначе просто обновляем стандартную ссылку
         }
-
+        
         t.setBounds(
                 Integer.parseInt(mlpc.x),
                 Integer.parseInt(mlpc.y),
                 Integer.parseInt(mlpc.width),
                 Integer.parseInt(mlpc.height)); // координаты
         ((Container) parent).add(t); // добавляем в список отображения родителя
-        components.put(mlpc.name, t); // добавляем в список объектов
+        components.put(mlpc.name, t1); // добавляем в список объектов
         return t;
     }
 

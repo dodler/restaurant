@@ -13,7 +13,7 @@ package model;
  */
 public class XMLRequestGenerator {
 
-    private static XMLRequestGenerator instance = new XMLRequestGenerator();
+    private final static XMLRequestGenerator instance = new XMLRequestGenerator();
 
     public static XMLRequestGenerator getInstance() {
         return instance;
@@ -40,7 +40,7 @@ public class XMLRequestGenerator {
      * для запроса добаления категории
      * @param cat - категория, которую нужно добавить
      * @param type - тип азапроса, должен быть RequestType.A
-     * @param id 
+     * @param id - родительской категории
      */
     public void putCategory(ICategory cat, RequestType type, int id){
         putCategory(cat, type);
@@ -75,6 +75,12 @@ public class XMLRequestGenerator {
         curReq.append(d.getName()); // добавили имя
         curReq.append("\" price=\"");
         curReq.append(d.getPrice()); // добавили имя
+        curReq.append("\" />");
+    }
+    
+    public void del(int id){
+        curReq.append("<del id=\"");
+        curReq.append(id);
         curReq.append("\" />");
     }
 

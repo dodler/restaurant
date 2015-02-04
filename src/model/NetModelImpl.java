@@ -17,6 +17,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -27,6 +31,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * класс для загрузки модели с сервера также имплементирует IModel как
@@ -44,20 +49,34 @@ public class NetModelImpl implements IModel {
     private final BufferedWriter writer;
     private ArrayList<Dish> totalDishList;
     private ArrayList<ICategory> totalCategoryList;
-    private boolean isInited = false; // флаг для проверки 
+    private boolean isInited; 
     private Document doc; // переменная нужна для парсинга xml документа
     private XMLRequestGenerator xmlrg;
+    private final GZIPInputStream zipis;
+    private final GZIPOutputStream zipos;
+
     /**
      * конструктор
      *
      * @param ip - ip адрес для соединения с сервером через сокет
      * @param port - порт для соединения с сервером
+     * @param zip - будет ли использовано сжатие. если нет, то данные будут передаваться через стандартный символьный канал.
      * @throws Exception - ошибка создания соединения/ просто подключения и т.д
      */
-    public NetModelImpl(String ip, int port) throws Exception {
+    public NetModelImpl(String ip, int port, boolean zip) throws Exception {
+        this.isInited = false;
         socket = new Socket(InetAddress.getByName(ip), port);
-        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        if (!zip) {
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            zipis = null;
+            zipos = null;
+        } else {
+            zipis = new GZIPInputStream(socket.getInputStream());
+            zipos = new GZIPOutputStream(socket.getOutputStream());
+            writer = null;
+            reader = null;
+        }
         xmlrg = XMLRequestGenerator.getInstance();
     }
 
@@ -66,9 +85,12 @@ public class NetModelImpl implements IModel {
      * соединения
      */
     private NetModelImpl() {
+        this.isInited = false;
         socket = null;
         reader = null;
         writer = null;
+        zipis = null;
+        zipos = null;
     }
 
     /**
@@ -108,68 +130,72 @@ public class NetModelImpl implements IModel {
             Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         String output = writer.getBuffer().toString().replaceAll(">", ">\n"); // фикс бага? для переноса строк
-        writer.write(output); // запись в объект сокета
-        writer.flush(); // очистка - отправка данных в сеть
+        if (this.writer != null) {
+            writer.write(output); // запись в объект сокета
+            writer.flush(); // очистка - отправка данных в сеть
+        } else {
+            zipos.write(output.getBytes());
+            zipos.flush();
+        }
     }
 
     /**
-     * обновление категории на сервере
-     * те смена названия блюда
+     * обновление категории на сервере те смена названия блюда
+     *
      * @param cat - категория, которую нужно обновлять с изменениями
      */
-    public void update(ICategory cat) throws IOException{
+    public void update(ICategory cat) throws IOException {
         xmlrg.putCategory(cat, XMLRequestGenerator.RequestType.U);
-        try {
-            writer.write(xmlrg.getRequest());
-        } catch (IOException ex) {
-            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
-            throw ex;
-        }
+        write();
     }
-    
+
     /**
-     * обновление блюда
-     * те смена цены или названия
+     * обновление блюда те смена цены или названия
+     *
      * @param d - блюдо, которое нужно обновить
      */
-    public void update(Dish d) throws IOException{
+    public void update(Dish d) throws IOException {
         xmlrg.putDish(d, XMLRequestGenerator.RequestType.U);
-        try {
-            writer.write(xmlrg.getRequest());
-        } catch (IOException ex) {
-            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
-            throw ex;
-        }
+        write();
     }
-    
+
     /**
      * добавление категории в дерево на сервер
+     *
      * @param cat - новая категория
      * @param parentID - ид родительской категории
      */
-    public void add(ICategory cat, int parentID) throws IOException{
+    public void add(ICategory cat, int parentID) throws IOException {
         xmlrg.putCategory(cat, XMLRequestGenerator.RequestType.A, parentID);
-        try{
-            writer.write(xmlrg.getRequest());
-            
-        }catch(IOException ioe){
-            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ioe);
-            throw ioe;
-        }
+        write();
     }
-    
-    public void add(Dish d, int parentID) throws IOException{
+
+    public void add(Dish d, int parentID) throws IOException {
         xmlrg.putDish(d, XMLRequestGenerator.RequestType.A, parentID);
-        try{
-            writer.write(xmlrg.getRequest());
-        }catch(IOException ioe){
+        write();
+    }
+
+    public void delete(int id) throws IOException {
+        xmlrg.del(id);
+        write();
+    }
+
+    private void write() throws IOException {
+        String s = xmlrg.getRequest();
+        try {
+            if (writer != null) {
+                writer.write(xmlrg.getRequest());
+                writer.flush();
+            } else {
+                zipos.write(s.getBytes(), 0, s.length());
+                zipos.flush();
+            }
+        } catch (IOException ioe) {
             Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ioe);
             throw ioe;
         }
     }
-    
-    
-    
+
     /**
      * рекурсивный метод создания xml дерева из дерева категорий после полного
      * прохода создается дерево xml в котором хранится дерево категорий грубо
@@ -206,14 +232,77 @@ public class NetModelImpl implements IModel {
     }
 
     /**
-     * метод загрузки данных на сервер
+     * метод парсинга строчки в xml в готвоую структуру поная загрузка дерева
+     * производится в методе load там производится загрузка xml с сервера и
+     * обраобтка в этом методе
      *
-     * @param name - адрес сервера
+     * @param source - адрес сервера
      * @throws Exception - если загрузка не удалась
      */
     @Override
-    public void load(String name) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void load(String source) throws Exception {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document d = db.parse(source);
+        try {
+            for (int i = 0; i < d.getChildNodes().getLength(); i++) {
+                //System.out.println(doc.getChildNodes().item(i).getAttributes().getNamedItem("name").getTextContent());
+                initCat(null, d.getChildNodes().item(i));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * загрузка дерева с сервера наичнать работу с моделью нужно с вызова этого
+     * метода
+     *
+     * @throws Exception
+     */
+    public void load() throws Exception {
+        StringBuilder sb = new StringBuilder("");
+        String inp;
+        while ((inp = reader.readLine()) != null) {
+            sb.append(inp);
+        }
+        load(sb.toString());
+    }
+
+    private void initCat(ICategory root, Node node) throws Exception {
+        String type = node.getNodeName(), // получаем тип или еду
+                name = node.getAttributes().getNamedItem("name").getTextContent(); // получили имя
+        double price = 0;
+        Node prc;
+        if ((prc = node.getAttributes().getNamedItem("price")) != null) {
+            price = Double.parseDouble(prc.getTextContent());
+        }
+
+        ICategory newRoot = null;
+        switch (type) {
+            case "dish":
+                root.addDish(new Dish(name, price));
+                break;
+            case "category":
+                if (this.root == null) {
+                    this.root = new CategoryImpl(node.getAttributes().getNamedItem("name").getTextContent());
+                    newRoot = this.root;
+                } else {
+                    newRoot = new CategoryImpl(name);
+                    root.addCategory(newRoot);
+                }
+                break;
+        }
+        NodeList childs = node.getChildNodes();
+        for (int i = 0; i < childs.getLength(); i++) {
+            //if (childs.item(i).getNodeName().equals("category") && newRoot != null) {
+            if (childs.item(i).getNodeName().equals("category") || childs.item(i).getNodeName().equals("dish")) {
+                initCat(newRoot, childs.item(i));
+            }
+            //} else if (childs.item(i).getNodeName().equals("dish")) {
+            //  initCat(root, childs.item(i));
+            //}
+        }
     }
 
     /**

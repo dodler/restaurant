@@ -26,9 +26,14 @@ public interface IView {
      * вывод подкатегорий категории cat
      * @param cat - имя категории, из которой нужно вывести
      */
-    void showCategoryList(String cat);
+    void showCategoryList(ICategory cat);
     
-    void showDishTree(String category);
+    /**
+     * вывод блюд и категорий, которые являются дочерними
+     * по отношению к категории
+     * @param category - категория, подкатегории которой нужно выводить
+     */
+    void showDishTree(ICategory category);
     
     /**
      * вывод всех категорий и блюд с ценами
@@ -44,18 +49,34 @@ public interface IView {
      * вывод всех блюд из категории с ценами
      * @param category - имя категории, из которой надо все вывести
      */
-    void showDishTreePriced(String category);
+    void showDishTreePriced(ICategory category);
     
     void show(ICategory cat);
+    /**
+     * вывод категории с блюдами
+     * @param cat - категория, которую нужно вывести
+     */
     void showWithDishes(ICategory cat);
 
     /**
-     *
+     * вывод списа категорий без подкатегорий
      * @param catList
      */
     void show(ArrayList<ICategory> catList);
+    /**
+     * вывод списка блюд на экран с ценами
+     * @param dishList 
+     */
     void showDish(ArrayList<Dish> dishList);
+    /**
+     * вывод строки на экран
+     * @param source - строка, которую нужно вывести на экран
+     */
     void show(String source);
+    /**
+     * вывод единственного блюда на экран
+     * @param d 
+     */
     void show(Dish d);
     
 }

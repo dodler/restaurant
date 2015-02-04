@@ -10,7 +10,7 @@ import java.awt.Container;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import static jdk.nashorn.internal.codegen.CompilerConstants.className;
+import javax.swing.border.EmptyBorder;
 import ui.MarkupLoader;
 
 /**
@@ -31,7 +31,7 @@ public class ButtonAcceptor extends IUiAcceptor {
         } else {
             t = (JButton) ml.getDialogClass(mlpc.className).getConstructor(String.class).newInstance(mlpc.label);
         }
-        
+
         if (mlpc.mouseListener != null && ml.containsMouseListener(mlpc.mouseListener)) { // ищем нужный обработчик
             t.addMouseListener(ml.getMouseListener(mlpc.mouseListener)); // если есть назначаем
         }
@@ -43,13 +43,17 @@ public class ButtonAcceptor extends IUiAcceptor {
 
         ((Container) parent).add(t);
         components.put(mlpc.name, t);
-        
+
         if (mlpc.iconUrl != null) {
             ImageIcon ii; // иконка для кнопки
             if (!mlpc.iconUrl.equals("")) {
                 ii = new ImageIcon(mlpc.iconUrl);
                 ((JButton) t).setIcon(ii);
             }
+        }
+        if (mlpc.transparent.equals("true")) {
+            ((JButton) t).setContentAreaFilled(false);
+            ((JButton) t).setBorder(new EmptyBorder(0, 0, 0, 0));
         }
         return t;
     }

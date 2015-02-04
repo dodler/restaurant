@@ -1,27 +1,83 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<frame name="main" autoEnable="true" width="640" height="480">
-	<label
-		name = "test"
-		x = '250'
-		y = '350'
-		width = '100'
-		height = '30'
-		label = "Просто "
-	/>
-	<menuBar name = "menu">
-		<menu name = "1" label = "File">
-			<menuItem name = "11" label = "New" />
-			<menuItem name = "12" label = "Edit" />
-			<menuItem name = "13" label = "Save" />
-			<menuItem name = "14" label = "Save as" />
-		</menu>
-		<menu name = "2" label = "Edit">
-			<menuItem name = "21" label = "бла" />
-			<menuItem name = "22" label = "бла бла" />
-		</menu>
-		<menu name = "3" label = "View" />
-		<menu name = "4" label = "Help" />
-		<menu name = "5" label = "Exit" />
-	</menuBar>
+<frame 
+	name="main" 
+	autoEnable="true" 
+	width="640" 
+	height="480" 
+	label="Client v0.1"
+	backgroundColor="white"
+>
+
+	<table autoEnable="true" 
+		x = "10"
+		y="100"
+		width="600"
+		height="400"
+		name="mainTable"
+		rows="Код;Название;Цена"
+	>
+
+	</table>
+
+<button name="connectBtn" autoEnable="true"
+x="10"
+y="10"
+width="50"
+height="50"
+label=""
+mouseListener="onConnectClick" 
+iconURL="pic/connect.png"
+transparent="true"
+/>
+
+<button name="addBtn" autoEnable="true"
+x="65"
+y="10"
+width="50"
+height="50"
+label=""
+mouseListener="onAddClick"
+iconURL="pic/add.png"
+transparent="true"
+/>
+
+<button name="delBtn" autoEnable="true"
+x="120"
+y="10"
+width="50"
+height="50"
+label=""
+mouseListener="onDelClick"
+iconURL="pic/delete.png"
+transparent="true"
+/>
+
+<text
+name="findText"
+x="175"
+y="25"
+width="200"
+height="20"
+/>
+
+<button name="findBtn" autoEnable="true"
+x="380"
+y="10"
+width="50"
+height="50"
+transparent="true"
+iconURL="pic/find.png"
+mouseListener="onFindClick"
+/>
+
+<button name="sortBtn" autoEnable="true"
+x="570"
+y="10"
+width="50"
+height="50"
+transparent="true"
+iconURL="pic/sort.png"
+mouseListener="onSortClick"
+/>
 	
 </frame>

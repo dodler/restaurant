@@ -6,6 +6,8 @@ package nc;
 
 import controller.IModelController;
 import haulmaunt.lyan.ui.markupexception.MissingMouseListenerException;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -53,17 +55,17 @@ public class AppController {
             logger.log(Level.SEVERE, null, ex);
         }
 
-        IModel model;
+        IModel model = null;
 
         try {
-            model = new NetModelImpl(config.get("address"), Integer.parseInt(config.get("port")));
+            model = new NetModelImpl(config.get("address"), Integer.parseInt(config.get("port")), Boolean.getBoolean(config.get("enable-zip")));
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
 
-        IView view;
+        IView view = null;
         try {
-            view = new SwingView(config.get("xml-markup"));
+            view = new SwingView(model);
         } catch (IOException ioe) {
             logger.log(Level.SEVERE, null, ioe);
         } catch (ParserConfigurationException pce) {
@@ -72,6 +74,12 @@ public class AppController {
             logger.log(Level.SEVERE, null, mmle);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            ((SwingView)view).init(config.get("xml-markup"));
+        } catch (Exception ex) {
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
