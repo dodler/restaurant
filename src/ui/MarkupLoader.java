@@ -317,16 +317,18 @@ public class MarkupLoader {
             if (attributes == null) {
                 continue; // если атрибутов нет то смысла продолджать нету
             }
-            mlpc.rows = convertNodeToString(attributes, "rows");
-            mlpc.model = convertNodeToString(attributes, "model");
-            mlpc.fontStyle = convertNodeToString(attributes, "fontStyle");
-            mlpc.fontSize = convertNodeToString(attributes, "fontSize");
-            mlpc.fontName = convertNodeToString(attributes, "fontName");
-            mlpc.focusable = convertNodeToString(attributes, "focusable");
-            mlpc.backgroundColor = convertNodeToString(attributes, "backgroundColor");
-            mlpc.className = convertNodeToString(attributes, "class");
-            mlpc.name = convertNodeToString(attributes, "name");
-            mlpc.label = convertNodeToString(attributes, "label");
+            mlpc.tooltip = convertNodeToString(attributes, "tooltip");
+            mlpc.modal = convertNodeToString(attributes, "modal");
+            mlpc.rows = convertNodeToString(attributes, "rows"); // стобцы?
+            mlpc.model = convertNodeToString(attributes, "model"); // модель таблицы
+            mlpc.fontStyle = convertNodeToString(attributes, "fontStyle"); // стиль шрифта
+            mlpc.fontSize = convertNodeToString(attributes, "fontSize"); // размер
+            mlpc.fontName = convertNodeToString(attributes, "fontName"); // название шрифта
+            mlpc.focusable = convertNodeToString(attributes, "focusable"); // можно ли наводить и тыкать?
+            mlpc.backgroundColor = convertNodeToString(attributes, "backgroundColor"); // цвет заднего фона
+            mlpc.className = convertNodeToString(attributes, "class"); // загрузка нужного класса
+            mlpc.name = convertNodeToString(attributes, "name"); // имя объекта
+            mlpc.label = convertNodeToString(attributes, "label"); // текст, который будет выводиться в объекте
 
             mlpc.x = convertNodeToString(attributes, "x");
             mlpc.y = convertNodeToString(attributes, "y");
@@ -334,11 +336,11 @@ public class MarkupLoader {
             mlpc.height = convertNodeToString(attributes, "height");
 
             mlpc.autoEnable = convertNodeToString(attributes, "autoEnable"); // почему то никак не задействовано
-            mlpc.layout = convertNodeToString(attributes, "layout");
-            mlpc.mouseListener = convertNodeToString(attributes, "mouseListener");
-            mlpc.nodeName = currentComponents.item(i).getNodeName();
-            mlpc.iconUrl = convertNodeToString(attributes, "iconURL");
-            mlpc.transparent = convertNodeToString(attributes, "transparent");
+            mlpc.layout = convertNodeToString(attributes, "layout"); // декларация слоя
+            mlpc.mouseListener = convertNodeToString(attributes, "mouseListener"); // слушатель мыши
+            mlpc.nodeName = currentComponents.item(i).getNodeName(); // имя нода
+            mlpc.iconUrl = convertNodeToString(attributes, "iconURL"); // юрл картинки для кнопки
+            mlpc.transparent = convertNodeToString(attributes, "transparent"); // прозрачность
 
             switch (mlpc.nodeName) {
 
@@ -388,23 +390,9 @@ public class MarkupLoader {
                     break;
                 default:
             }
-            if (parent != null){
+            if (parent != null) {
                 parent.repaint();
             }
-            /*if (t != null) {
-             if (!fontName.equals("")) {
-             t.setFont(new Font(fontName, Integer.parseInt(fontStyle), Integer.parseInt(fontSize))); // ставим новый шрифт
-             }
-             if (!backgroundColor.equals("")) { // ставим цвет фона
-             t.setBackground(new Color(Integer.parseInt(backgroundColor)));
-             }
-             if (!focusable.equals("")) { // и выставляем свойство focusable
-             t.setFocusable(Boolean.parseBoolean(focusable));
-             }
-             if (!name.equals("")) {
-             t.setName(name); // это свойство общее для всех компонентов
-             }
-             }*/
         }
     }
 

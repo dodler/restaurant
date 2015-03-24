@@ -18,6 +18,8 @@ public class MarkupLoaderPropertiesContainer {
         return instance;
     }
     
+    public String tooltip; // подсказка для кнопок
+    public String modal; // модальность - блокируется ли родительский фрейм или диалог
     public String transparent; // прозрачность кнопки
     public String rows; // названия столбцов таблицы
     public String model;// модель таблицы

@@ -9,11 +9,15 @@ import java.awt.Component;
 import java.awt.Container;
 import java.util.HashMap;
 import javax.swing.JLabel;
-import static jdk.nashorn.internal.codegen.CompilerConstants.className;
 import ui.MarkupLoader;
 
 /**
- *
+ *поддреживает свойства
+ * x
+ * y
+ * width
+ * height
+ * label
  * @author lyan
  */
 public class LabelAcceptor extends IUiAcceptor {
@@ -35,7 +39,8 @@ public class LabelAcceptor extends IUiAcceptor {
                 Integer.parseInt(mlpc.y),
                 Integer.parseInt(mlpc.width),
                 Integer.parseInt(mlpc.height));
-        ml.getParent().add(t);
+        t.setVisible(true);
+        ((Container)parent).add(t);
         components.put(mlpc.name, t);
         return t;
     }

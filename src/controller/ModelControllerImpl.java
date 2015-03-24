@@ -22,8 +22,10 @@ import view.IView;
 
 /**
  *
+ * меотды класса уже не актуальны
  * @author Артем
  */
+@Deprecated
 public class ModelControllerImpl implements IModelController {
 
     private ICategory rootCategory;

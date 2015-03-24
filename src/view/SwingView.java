@@ -7,10 +7,10 @@ package view;
 import controller.treecommand.TreeCommand;
 import haulmaunt.lyan.ui.markupexception.MissingMouseListenerException;
 import java.awt.Cursor;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -19,7 +19,10 @@ import model.Dish;
 import model.ICategory;
 import model.IModel;
 import model.NetModelImpl;
+import nc.AppController;
+import ui.InitFoo;
 import ui.MarkupLoader;
+import ui.NoSuchElementException;
 
 /**
  * класс гуи для клиента справочной системы отображает содержимое меню в виде
@@ -33,7 +36,6 @@ public class SwingView implements IView {
 
     private MarkupLoader loader;
     private DefaultTableModel dtm;
-    private NetModelImpl model;
     private final String[] data = new String[2]; // перемнная для записи строк в таблицу
 
     /**
@@ -47,6 +49,8 @@ public class SwingView implements IView {
         return this.loader;
     }
 
+    private IModel model;
+
     /**
      * контструктор, который позволяет загрузить разметку xml, на основе которой
      * будет построена программа
@@ -58,157 +62,23 @@ public class SwingView implements IView {
      */
     public SwingView(IModel model) throws IOException,
             ParserConfigurationException, MissingMouseListenerException, Exception {
+        this.model = model;
         loader = new MarkupLoader();
+        foos = new ArrayList<>();
+    }
 
-        try {
-            this.model = (NetModelImpl) model;
-        } catch (ClassCastException cce) {
-            throw new ClassCastException("Класс должен наследовать NetModelImpl");
-        }
-        
-        loader.addMouseListener("onConnectClick", new MouseListener() {
+    private ArrayList<InitFoo> foos;
 
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mousePressed(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseExited(MouseEvent me) {
-                
-            }
-
-        });
-
-        loader.addMouseListener("onDelClick", new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mousePressed(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseExited(MouseEvent me) {
-                
-            }
-
-        });
-
-        loader.addMouseListener("onFindClick", new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mousePressed(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseExited(MouseEvent me) {
-                
-            }
-
-        });
-
-        loader.addMouseListener("onAddClick", new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent me) {
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent me) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent me) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent me) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent me) {
-
-            }
-        });
-        
-        loader.addMouseListener("onSortClick", new MouseListener(){
-
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mousePressed(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseExited(MouseEvent me) {
-                
-            }
-            
-        });
+    /**
+     * метод добавляет функции дополнительной обработки перед инициализацией
+     * интерфейса например нужно отредактировать кнопку или таблицу или задать
+     * начальные данные в таблице создаете класс наследующий интерфейс и кидаете
+     * в аргумент функция будет выполнена при инициализации гуи
+     *
+     * @param foo нужная функция обрабоки
+     */
+    public void addInitFoo(InitFoo foo) {
+        foos.add(foo);
     }
 
     /**
@@ -223,13 +93,15 @@ public class SwingView implements IView {
      */
     public void init(String xml) throws IOException, ParserConfigurationException, MissingMouseListenerException, Exception {
         loader.loadMarkup(xml);
-        dtm = (DefaultTableModel) (((JTable) loader.getComponent("mainTable")).getModel()); // получили модель таблицы
-        
-        ((JButton)loader.getComponent("addBtn")).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        ((JButton)loader.getComponent("connectBtn")).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        ((JButton)loader.getComponent("findBtn")).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        ((JButton)loader.getComponent("delBtn")).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        ((JButton)loader.getComponent("sortBtn")).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        //dtm = (DefaultTableModel) (((JTable) loader.getComponent("mainTable")).getModel()); // получили модель таблицы
+        for (InitFoo f : foos) {
+            f.init();
+        }
+
+        dtm = (DefaultTableModel) ((JTable) loader.getComponent("mainTable")).getModel();
+        updateTable();
+
     }
 
     /**
@@ -237,17 +109,10 @@ public class SwingView implements IView {
      * от записей
      *
      */
+    @Deprecated
     @Override
     public void showCategoryList() {
         cleanTable();
-        model.treeBypass(new TreeCommand() {
-            @Override
-            public void handle(ICategory category) {
-                data[0] = category.getName();
-                data[1] = "";
-                dtm.addRow(data);
-            }
-        }, model.getRootCategory());
     }
 
     /**
@@ -255,9 +120,36 @@ public class SwingView implements IView {
      * раз перед обновлением данных
      */
     private void cleanTable() {
-        int c = dtm.getRowCount();
-        for (int i = 0; i < c; i++) {
-            dtm.removeRow(i);
+        while (dtm.getRowCount() > 0) {
+            dtm.removeRow(0);
+        }
+    }
+
+    public void setModel(IModel model) {
+        this.model = model;
+        updateTable();
+    }
+
+    /**
+     * метод обновляет данные таблицы вью
+     */
+    public void updateTable() {
+        String[] data;
+        cleanTable();
+        ArrayList<ICategory> cats = model.getCategoryList();
+        for (ICategory c : cats) {
+            data = new String[3];
+            data[0] = String.valueOf(c.getId());
+            data[1] = c.getName();
+            data[2] = "";
+            dtm.addRow(data);
+            for (Dish d : c.getDishList()) {
+                data = new String[3];
+                data[0] = String.valueOf(d.getId());
+                data[1] = d.getName();
+                data[2] = String.valueOf(d.getPrice());
+                dtm.addRow(data);
+            }
         }
     }
 
@@ -267,17 +159,10 @@ public class SwingView implements IView {
      *
      * @param cat - имя категории, подкатегории которой надо вывести
      */
+    @Deprecated
     @Override
     public void showCategoryList(ICategory cat) {
         cleanTable();
-        model.treeBypass(new TreeCommand() {
-            @Override
-            public void handle(ICategory category) {
-                data[0] = category.getName();
-                data[1] = "";
-                dtm.addRow(data);
-            }
-        }, cat);
     }
 
     /**
@@ -285,53 +170,28 @@ public class SwingView implements IView {
      *
      * @param category - категоия, из которой нужно все выводить на экран
      */
+    @Deprecated
     @Override
     public void showDishTree(ICategory category) {
-        model.treeBypass(new TreeCommand() {
-
-            @Override
-            public void handle(ICategory category) {
-                data[0] = category.getName();
-                data[1] = "";
-                dtm.addRow(data);
-                for (Dish d : category.getDishList()) {
-                    data[0] = d.getName();
-                    data[1] = "";
-                    dtm.addRow(data);
-                }
-            }
-        }, category);
     }
 
+    @Deprecated
     @Override
     public void showDishTreePriced() {
-        showDishTreePriced(model.getRootCategory());
     }
 
+    @Deprecated
     @Override
     public void showDishTree() {
-        showDishTree(model.getRootCategory());
     }
 
+    @Deprecated
     @Override
     public void showDishTreePriced(ICategory category) {
         cleanTable();
-        model.treeBypass(new TreeCommand() {
-
-            @Override
-            public void handle(ICategory category) {
-                data[0] = category.getName();
-                data[1] = "";
-                dtm.addRow(data);
-                for (Dish d : category.getDishList()) {
-                    data[0] = d.getName();
-                    data[1] = Double.toString(d.getPrice());
-                    dtm.addRow(data);
-                }
-            }
-        }, category);
     }
 
+    @Deprecated
     @Override
     public void show(ICategory cat) {
         cleanTable();
@@ -340,6 +200,7 @@ public class SwingView implements IView {
         dtm.addRow(data);
     }
 
+    @Deprecated
     @Override
     public void showWithDishes(ICategory cat) {
         show(cat);
@@ -350,6 +211,7 @@ public class SwingView implements IView {
         }
     }
 
+    @Deprecated
     @Override
     public void show(ArrayList<ICategory> catList) {
         cleanTable();
@@ -360,6 +222,7 @@ public class SwingView implements IView {
         }
     }
 
+    @Deprecated
     @Override
     public void showDish(ArrayList<Dish> dishList) {
         cleanTable();
@@ -370,11 +233,13 @@ public class SwingView implements IView {
         }
     }
 
+    @Deprecated
     @Override
     public void show(String source) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Deprecated
     @Override
     public void show(Dish d) {
         cleanTable();

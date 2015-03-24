@@ -9,11 +9,16 @@ import java.awt.Component;
 import java.awt.Container;
 import java.util.HashMap;
 import javax.swing.JTextField;
-import static jdk.nashorn.internal.codegen.CompilerConstants.className;
 import ui.MarkupLoader;
 
 /**
- *
+ * поддерживает свойства
+ * label
+ * x
+ * y
+ * width
+ * height
+ * className
  * @author lyan
  */
 public class TextAcceptor extends IUiAcceptor {

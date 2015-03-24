@@ -12,6 +12,7 @@ package model;
 import controller.treecommand.TreeCommand;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * интерфейс модели
@@ -32,5 +33,7 @@ public interface IModel {
     boolean checkUnique(ICategory rootCategory, ICategory searchCategory);
 
     boolean checkUnique(ICategory rootCategory, Dish searchDish);
+    
+    ArrayList<ICategory> getCategoryList();
 
 }

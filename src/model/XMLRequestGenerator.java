@@ -30,6 +30,7 @@ public class XMLRequestGenerator {
 
     public void putCategory(ICategory cat, RequestType type) {
         curReq.append("<new id=\"");
+	curReq.append("\" type=\"category\"");
         curReq.append(cat.getId()); // добавили ид
         curReq.append("\" name=\"");
         curReq.append(cat.getName()); // добавили имя
@@ -71,6 +72,7 @@ public class XMLRequestGenerator {
     public void putDish(Dish d, RequestType type) {
         curReq.append("<new id=\"");
         curReq.append(d.getId()); // добавили ид
+	curReq.append("\" type=\"dish\"");
         curReq.append("\" name=\"");
         curReq.append(d.getName()); // добавили имя
         curReq.append("\" price=\"");

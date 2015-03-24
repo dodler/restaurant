@@ -6,9 +6,8 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
-public interface ICategory {
+public interface ICategory{
 
     /* МЕТОДЫ ОПЕРАЦИЙ С ВЫДЕЛЕННОЙ КАТЕГОРИЕЙ */
     // Метод получения id категории.

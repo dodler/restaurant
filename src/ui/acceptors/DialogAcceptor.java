@@ -6,11 +6,9 @@
 package ui.acceptors;
 
 import java.awt.Component;
-import static java.lang.Compiler.enable;
 import java.util.HashMap;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import static jdk.nashorn.internal.codegen.CompilerConstants.className;
 import ui.MarkupLoader;
 
 /**
@@ -26,7 +24,7 @@ public class DialogAcceptor extends IUiAcceptor {
 
     @Override
     public Component acceptUI(MarkupLoaderPropertiesContainer mlpc, Component parent, HashMap<String, Component> components, MarkupLoader ml) throws Exception {
-        if (mlpc.className.equals("JDialog") && !ml.containsDialogClass(mlpc.className)) {
+        if (mlpc.className.equals("") || mlpc.className.equals("JDialog") ||  !ml.containsDialogClass(mlpc.className)) {
             t = new JDialog((JFrame) parent, mlpc.label);
         } else {
             t = (JDialog) ml.getDialogClass(mlpc.className).getConstructor().newInstance();
@@ -42,6 +40,7 @@ public class DialogAcceptor extends IUiAcceptor {
                 ((JDialog) t).setLayout(null); // выбираем тип разметки
         }
         ((JDialog) t).setVisible(enable);
+        ((JDialog) t).setModal(Boolean.parseBoolean(mlpc.modal));
 
         components.put(mlpc.name, t);
         return t;

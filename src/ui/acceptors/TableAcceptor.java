@@ -8,24 +8,23 @@ package ui.acceptors;
 import java.awt.Component;
 import java.awt.Container;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import ui.MarkupLoader;
 
 /**
- * создание таблицы
- * поддерживаются теги
- * автоматически будет добавлена прокрутка,если не хватает длины
- * autoEnable - сразу инициализируется
- * className - класс таблицы, которым будет инициализирована таблица
- * по умолчанию - JTable
- * model - модель таблицы, нужно просто укзаать имя, которое потом нужно будет добавить в MarkupLoader
- * указывать необязательно, по умолчанию добавляется DefaultTableModel
- * x - координата таблицы по х
- * у - координата таблицы по y
- * width - длина таблицы
- * height - высота таблицы
+ * создание таблицы поддерживаются теги автоматически будет добавлена
+ * прокрутка,если не хватает длины autoEnable - сразу инициализируется className
+ * - класс таблицы, которым будет инициализирована таблица по умолчанию - JTable
+ * model - модель таблицы, нужно просто укзаать имя, которое потом нужно будет
+ * добавить в MarkupLoader указывать необязательно, по умолчанию добавляется
+ * DefaultTableModel x - координата таблицы по х у - координата таблицы по y
+ * width - длина таблицы height - высота таблицы
+ *
  * @author lyan
  */
 public class TableAcceptor extends IUiAcceptor {
@@ -48,21 +47,20 @@ public class TableAcceptor extends IUiAcceptor {
             t1 = (JTable) ml.getDialogClass(mlpc.className).getConstructor().newInstance(); // либо указанным
         }
 
-        if (ml.containsTableModel(mlpc.model)){ // назначаем модель данных
-            //((JTable) t1).setModel((AbstractTableModel) ml.getTableModel(mlpc.model)).newInstance());
-            return null; // TODO доделать таблицы
+        if (ml.containsTableModel(mlpc.model)) { // назначаем модель данных
+            t1.setModel(ml.getTableModel(mlpc.model));
+            Logger.getLogger(TableAcceptor.class.getName()).log(Level.SEVERE, "Добавлена модель");
         } else { // если она не была задана 
-            ((JTable) t1).setModel(new DefaultTableModel());
-            //throw new MissingTableModelException(); // то выбрасываем исключение
+            t1.setModel(new DefaultTableModel());
         }
-        
-        if (mlpc.rows != null){
+
+        if (mlpc.rows != null && !mlpc.rows.equals("")) {
             String[] columnNames = mlpc.rows.split(";");
-            DefaultTableModel dtm = new DefaultTableModel();
-            for(String s:columnNames){
-                dtm.addColumn(s);
+            TableModel dtm = t1.getModel();
+            for (String s : columnNames) {
+                ((DefaultTableModel)dtm).addColumn(s);
             }
-            ((JTable)t1).setModel(dtm);
+            t1.setModel(dtm);
         }
 
         if (enable) {
@@ -70,7 +68,7 @@ public class TableAcceptor extends IUiAcceptor {
         } else {
             t = t1; // иначе просто обновляем стандартную ссылку
         }
-        
+
         t.setBounds(
                 Integer.parseInt(mlpc.x),
                 Integer.parseInt(mlpc.y),

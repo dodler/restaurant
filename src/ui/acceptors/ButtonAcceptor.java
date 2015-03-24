@@ -7,6 +7,7 @@ package ui.acceptors;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -55,6 +56,10 @@ public class ButtonAcceptor extends IUiAcceptor {
             ((JButton) t).setContentAreaFilled(false);
             ((JButton) t).setBorder(new EmptyBorder(0, 0, 0, 0));
         }
+        if (!mlpc.tooltip.equals("")){
+            ((JButton)t).setToolTipText(mlpc.tooltip);
+        }
+        ((JButton)t).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return t;
     }
 

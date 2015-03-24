@@ -6,78 +6,109 @@
 package model;
 
 import controller.treecommand.TreeCommand;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.StringWriter;
+import java.net.ConnectException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import model.net.Request;
+import nc.AppController;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ui.NoSuchElementException;
+import view.SwingView;
 
 /**
  * класс для загрузки модели с сервера также имплементирует IModel как
- * ModelImplXml
+ * ModelImplXml класс рабоает по принципу репозитория git снчала изменения
+ * сохраняются в локальной модели потом они отправляются на сервер при помощи
+ * сериализации
  *
  * @author lyan
  */
-public class NetModelImpl implements IModel {
+public class NetModelImpl implements IModel, Serializable {
 
+    private int maxDishId, maxCatId;
+    private boolean fixed; // изменения в модели зафиксированы на сервере
     private int port; // порт по которому клиент будет соединяться с сервером
     private String ip; // соответствующий ип адрес
-    private ICategory root; // рутовая категория
-    private final Socket socket; // сокет соединения ксерверу
-    private final BufferedReader reader; // объекты для чтения и записи запросов
-    private final BufferedWriter writer;
-    private ArrayList<Dish> totalDishList;
-    private ArrayList<ICategory> totalCategoryList;
-    private boolean isInited; 
-    private Document doc; // переменная нужна для парсинга xml документа
-    private XMLRequestGenerator xmlrg;
-    private final GZIPInputStream zipis;
-    private final GZIPOutputStream zipos;
+    private transient final Socket socket; // сокет соединения ксерверу
+    private ArrayList<ICategory> cats;
+
+    private transient ObjectInputStream ois;
+    private transient ObjectOutputStream oos;
 
     /**
      * конструктор
      *
      * @param ip - ip адрес для соединения с сервером через сокет
      * @param port - порт для соединения с сервером
-     * @param zip - будет ли использовано сжатие. если нет, то данные будут передаваться через стандартный символьный канал.
-     * @throws Exception - ошибка создания соединения/ просто подключения и т.д
+     * @throws java.io.IOException
      */
-    public NetModelImpl(String ip, int port, boolean zip) throws Exception {
-        this.isInited = false;
-        socket = new Socket(InetAddress.getByName(ip), port);
-        if (!zip) {
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            zipis = null;
-            zipos = null;
-        } else {
-            zipis = new GZIPInputStream(socket.getInputStream());
-            zipos = new GZIPOutputStream(socket.getOutputStream());
-            writer = null;
-            reader = null;
+    public NetModelImpl(String ip, int port) throws IOException {
+        socket = new Socket();
+        this.cats = new ArrayList<>();
+        connect(ip, port);
+    }
+
+    /**
+     * при помощи этого метода производится подключение к серверу приложения
+     * создаются нужные каналы на считывание и запись данных
+     *
+     * @param ip адрес по которому будет подключатья сокет. строка - байты через
+     * точку. можно писать localhost для локального подключения
+     * @param port порт по которому будет подключаться сокет. целое число от 0
+     * до 65 с лишним тыся вроде
+     * @throws IOException обозначает неполадки подключения
+     */
+    public final void connect(String ip, int port) throws IOException {
+        if (socket.isConnected()) {
+            return; // чтобы не было двойного подключения
         }
-        xmlrg = XMLRequestGenerator.getInstance();
+
+        try {
+            socket.connect(new InetSocketAddress(InetAddress.getByName(ip), port));
+
+        } catch (ConnectException e) {
+            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, e.getMessage());
+
+        } catch (IOException ex) {
+            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        ois = new ObjectInputStream(socket.getInputStream());
+        oos = new ObjectOutputStream(socket.getOutputStream());
+    }
+
+    /**
+     * метод закрывает соединение с сервером
+     *
+     * @throws IOException
+     */
+    public void reset() throws IOException {
+        if (!socket.isClosed()) {
+            socket.close();
+            ois.close();
+            oos.close();
+        }
     }
 
     /**
@@ -85,23 +116,21 @@ public class NetModelImpl implements IModel {
      * соединения
      */
     private NetModelImpl() {
-        this.isInited = false;
         socket = null;
-        reader = null;
-        writer = null;
-        zipis = null;
-        zipos = null;
+        ois = null;
+        oos = null;
     }
 
     /**
      * метод возвращает рутовую категорию которая позволяет манипулировать
-     * данными и производить навигацию
+     * данными и производить навигацию upd 17 03: метод возвращает просто Null
      *
      * @return
      */
+    @Deprecated
     @Override
     public ICategory getRootCategory() {
-        return this.root;
+        return null;
     }
 
     /**
@@ -110,11 +139,9 @@ public class NetModelImpl implements IModel {
      * @param name - адрес сервера
      * @throws IOException - если загрузка не удалась
      */
+    @Deprecated
     @Override
     public void save(String name) throws IOException {
-        if (root != null) { // собираем xml дерево
-            writeTree(doc, root);
-        }
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = null;
         try {
@@ -124,29 +151,41 @@ public class NetModelImpl implements IModel {
         }
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); // парсинг
         StringWriter writer = new StringWriter();
-        try {
-            transformer.transform(new DOMSource(doc), new StreamResult(writer));
-        } catch (TransformerException ex) {
-            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
         String output = writer.getBuffer().toString().replaceAll(">", ">\n"); // фикс бага? для переноса строк
-        if (this.writer != null) {
-            writer.write(output); // запись в объект сокета
-            writer.flush(); // очистка - отправка данных в сеть
-        } else {
-            zipos.write(output.getBytes());
-            zipos.flush();
-        }
+        writer.write(output);
+        writer.flush();
     }
 
     /**
-     * обновление категории на сервере те смена названия блюда
+     * метод сохранения изменений на сервере отправлятс запрос с обновленной
+     * моделью модель на сервере обновляется
+     *
+     * @throws java.io.IOException ошибка записи модели на сервер
+     */
+    public void save() throws IOException {
+        Request req = new Request(this, Request.POST);
+        oos.writeObject(req);
+        oos.flush();
+        fixed = true;
+        Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, "save");
+    }
+
+    /**
+     * обновление категории в локальной мдоели для осхранения изменений нужно
+     * отправить модель на сервер методом save() изменять можно только имя в cat
+     * дложен быть ид категории, которую менять, а также нвое имя (или без
+     * изменения)
      *
      * @param cat - категория, которую нужно обновлять с изменениями
      */
-    public void update(ICategory cat) throws IOException {
-        xmlrg.putCategory(cat, XMLRequestGenerator.RequestType.U);
-        write();
+    public void update(ICategory cat) {
+        for (ICategory c : this.cats) {
+            if (cat.getId() == c.getId()) {
+                c.setName(cat.getName());
+                fixed = false;
+                return; // дальше итерировать смысла нет, считается, что ид уникален
+            }
+        }
     }
 
     /**
@@ -154,9 +193,17 @@ public class NetModelImpl implements IModel {
      *
      * @param d - блюдо, которое нужно обновить
      */
-    public void update(Dish d) throws IOException {
-        xmlrg.putDish(d, XMLRequestGenerator.RequestType.U);
-        write();
+    public void update(Dish d) {
+        for (ICategory c : cats) {
+            for (Dish d1 : c.getDishList()) {
+                if (d1.getId() == d.getId()) {
+                    d1.setName(d.getName());
+                    d1.setPrice(d.getPrice());
+                    fixed = false;
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -165,35 +212,119 @@ public class NetModelImpl implements IModel {
      * @param cat - новая категория
      * @param parentID - ид родительской категории
      */
-    public void add(ICategory cat, int parentID) throws IOException {
-        xmlrg.putCategory(cat, XMLRequestGenerator.RequestType.A, parentID);
-        write();
+    @Deprecated
+    public void add(ICategory cat, int parentID) {
     }
 
     public void add(Dish d, int parentID) throws IOException {
-        xmlrg.putDish(d, XMLRequestGenerator.RequestType.A, parentID);
-        write();
-    }
-
-    public void delete(int id) throws IOException {
-        xmlrg.del(id);
-        write();
-    }
-
-    private void write() throws IOException {
-        String s = xmlrg.getRequest();
-        try {
-            if (writer != null) {
-                writer.write(xmlrg.getRequest());
-                writer.flush();
-            } else {
-                zipos.write(s.getBytes(), 0, s.length());
-                zipos.flush();
+        for (ICategory c : cats) {
+            if (c.getId() == parentID) {
+                c.addDish(d);
+                fixed = false;
+                return;
             }
-        } catch (IOException ioe) {
-            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ioe);
-            throw ioe;
         }
+    }
+
+    /**
+     * метод удаления объекта меню по ид ид либо категории, либо блюда, без
+     * разницы
+     *
+     * @param id целочисленный параметр - ид нужного объекта
+     */
+    public void delete(int id) {
+        for (ICategory c : cats) {
+            if (id == c.getId()) {
+                c.getDishList().clear();
+                cats.remove(c);
+                fixed = false;
+                return; // находим удаляем старые блюда и удаляем категорию из списка категорий
+            }
+            for (Dish d : c.getDishList()) {
+                if (d.getId() == id) { //находим нужный ид и удаляем его
+                    c.getDishList().remove(d);
+                    fixed = false;
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * сам не пойму что это может пригодится не буду пока удалять
+     *
+     * @param params
+     */
+    public void pass(Map params) {
+
+    }
+
+    public void add(ICategory cat) {
+        cats.add(cat);
+        fixed = false;
+    }
+
+    /**
+     * метод загружает данные с сервера модель хранится в запросе запрос
+     * прихоидт сериазованным с сервера после прихода новой модели старая
+     * подменяется
+     *
+     * @throws IOException ошибка считывания данных из входного потока или
+     * отправки запроса на сервер
+     * @throws java.lang.ClassNotFoundException ошибка сериализации
+     */
+    public void load() throws IOException, ClassNotFoundException {
+        Request req = new Request(null, Request.GET);
+        oos.writeObject(req);
+        oos.flush();
+
+        req = (Request) ois.readObject();
+        cats.clear();
+        cats = new ArrayList<>();
+        ICategory tempC;
+        Dish tempD; // временные переменные для копирования
+        CopyOnWriteArrayList<ICategory> src = (CopyOnWriteArrayList) ((ModelImplXML) req.getModel()).getCategoryLst().clone();
+        for (ICategory c : src) {
+            tempC = new CategoryImpl(c.getName(), c.getId());
+            for (Dish d : c.getDishList()) {
+                tempD = new Dish(d.getName(), d.getPrice(), d.getId());
+                tempC.addDish(tempD);
+            }
+            cats.add(tempC);
+
+        }
+        for (ICategory c : cats) {
+            if (c.getId() > maxCatId) {
+                maxCatId = c.getId();
+            }
+            for (Dish d : c.getDishList()) {
+                if (d.getId() > maxDishId) {
+                    maxDishId = d.getId();
+                }
+            }
+        }
+        fixed = true;
+    }
+
+    /**
+     * методы инкрементируют текущий максимальный ид категории и возвращает
+     * новое значение
+     *
+     * @return целое число, максимальное ид категории
+     */
+    public int getMaxCatId() {
+        maxCatId = 1 + maxCatId;
+        return maxCatId;
+    }
+
+    /**
+     * метоз увелчивает значение максимального ид и возвращает новое значение
+     *
+     * @return целое число максимальный ид категории
+     */
+    public int getMaxDishId() {
+        maxDishId = maxDishId + 1;
+        return maxDishId;
     }
 
     /**
@@ -204,41 +335,20 @@ public class NetModelImpl implements IModel {
      * @param node - xml узел
      * @param cat - узел дерева категорий блюд
      */
+    @Deprecated
     private void writeTree(Node node, ICategory cat) {
-        Element e = doc.createElement("category"), dish, xmlCat; // это нужно только для рутовой категории
-        e.setAttribute("name", cat.getName());
-        e.setAttribute("id", Integer.toString(cat.getId()));
 
-        if (cat.equals(root)) { // добавление рутовой категории в документ
-            node.appendChild(e);
-        } else {
-            e = (Element) node;
-        }
-
-        for (Dish d : cat.getDishList()) {
-            dish = doc.createElement("dish");
-            dish.setAttribute("name", d.getName());
-            dish.setAttribute("price", Double.toString(d.getPrice()));
-            dish.setAttribute("id", Integer.toString(d.getId()));
-            e.appendChild(dish);
-        }
-        for (ICategory c : cat.getSubCategoryList()) {
-            xmlCat = doc.createElement("category");
-            xmlCat.setAttribute("name", c.getName());
-            xmlCat.setAttribute("id", Integer.toString(c.getId()));
-            writeTree(xmlCat, c);
-            e.appendChild(xmlCat);
-        }
     }
 
     /**
      * метод парсинга строчки в xml в готвоую структуру поная загрузка дерева
      * производится в методе load там производится загрузка xml с сервера и
-     * обраобтка в этом методе
+     * обраобтка в этом методе upd 17/03 загрузка с фиксированного сервера
      *
      * @param source - адрес сервера
      * @throws Exception - если загрузка не удалась
      */
+    @Deprecated
     @Override
     public void load(String source) throws Exception {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -248,27 +358,15 @@ public class NetModelImpl implements IModel {
             for (int i = 0; i < d.getChildNodes().getLength(); i++) {
                 //System.out.println(doc.getChildNodes().item(i).getAttributes().getNamedItem("name").getTextContent());
                 initCat(null, d.getChildNodes().item(i));
+
             }
         } catch (Exception ex) {
-            Logger.getLogger(NetModelImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NetModelImpl.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     * загрузка дерева с сервера наичнать работу с моделью нужно с вызова этого
-     * метода
-     *
-     * @throws Exception
-     */
-    public void load() throws Exception {
-        StringBuilder sb = new StringBuilder("");
-        String inp;
-        while ((inp = reader.readLine()) != null) {
-            sb.append(inp);
-        }
-        load(sb.toString());
-    }
-
+    @Deprecated
     private void initCat(ICategory root, Node node) throws Exception {
         String type = node.getNodeName(), // получаем тип или еду
                 name = node.getAttributes().getNamedItem("name").getTextContent(); // получили имя
@@ -284,13 +382,6 @@ public class NetModelImpl implements IModel {
                 root.addDish(new Dish(name, price));
                 break;
             case "category":
-                if (this.root == null) {
-                    this.root = new CategoryImpl(node.getAttributes().getNamedItem("name").getTextContent());
-                    newRoot = this.root;
-                } else {
-                    newRoot = new CategoryImpl(name);
-                    root.addCategory(newRoot);
-                }
                 break;
         }
         NodeList childs = node.getChildNodes();
@@ -310,6 +401,7 @@ public class NetModelImpl implements IModel {
      * @param command
      * @param rootCategory
      */
+    @Deprecated
     @Override
     public void treeBypass(TreeCommand command, ICategory rootCategory) {
         if (command != null && rootCategory != null) {
@@ -322,13 +414,32 @@ public class NetModelImpl implements IModel {
         }
     }
 
+    @Deprecated
     @Override
     public boolean checkUnique(ICategory root, ICategory searchCategory) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Deprecated
     @Override
     public boolean checkUnique(ICategory root, Dish searchDish) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ArrayList<ICategory> getCategoryList() {
+        return this.cats;
+    }
+
+    /**
+     * метод возвращает состояние модели а именно зафиксированы ли изменения на
+     * сервере если нет, то при закрытии клиента, изменения будут утеряны если
+     * да, то измеения висят на сервере
+     *
+     * @return boolean флаг, обозначющий наличие изменений, не отправленных на
+     * сервер
+     */
+    public boolean isFixed() {
+        return this.fixed;
     }
 }
