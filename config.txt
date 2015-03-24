@@ -3,3 +3,4 @@ port=139
 logger=testlog.log
 xml-markup=markup.xml
 enable-zip=true
+data-source=source.xml

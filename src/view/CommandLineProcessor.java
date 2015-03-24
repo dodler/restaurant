@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.IModel;
-import nc.Server;
+import nc.server.Server;
 
 /**
  * реализация паттерна декоратор

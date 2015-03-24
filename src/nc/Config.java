@@ -41,7 +41,7 @@ public class Config {
         if (conf.containsKey(param)) {
             return conf.get(param);
         } else {
-            throw new Exception();
+            throw new Exception("Параметр отсуствует");
         }
     }
 }

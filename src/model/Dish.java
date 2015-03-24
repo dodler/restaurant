@@ -3,6 +3,8 @@ package model;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Dish implements Serializable{
     private String name;
@@ -12,19 +14,18 @@ public class Dish implements Serializable{
 
 /* КОНСТРУКТОРЫ */
     // Конструктор, создающий блюдо с указанным названием и ценой.
-    public Dish(String name, double cost) throws IncorrectCostException{
-        checkCost(cost);
+    public Dish(String name, double cost){
         this.name = name;
         this.price = cost;
-        this.id = Calendar.getInstance().hashCode();
+        this.id = Calendar.getInstance().hashCode();// TODO переписать с автоинкрементов ид в модели
     }
 
     // Конструктор, создающий блюдо с указанным названием и стандартной ценой 100 руб.
-    public Dish(String name) throws IncorrectCostException{
+    public Dish(String name){
         this(name, 0);
     }
     
-    public Dish(String name, double cost, int id) throws IncorrectCostException{
+    public Dish(String name, double cost, int id){
         this(name, cost);
         this.id = id;
     }
@@ -47,8 +48,12 @@ public class Dish implements Serializable{
     }
 
     // Метод изменения цены блюда.
-    public void setPrice(double price) throws IncorrectCostException{
-        checkCost(price);
+    public void setPrice(double price){
+        try {
+            checkCost(price);
+        } catch (IncorrectCostException ex) {
+            Logger.getLogger(Dish.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.price = price;
     }
 
@@ -59,6 +64,7 @@ public class Dish implements Serializable{
 
 /* ПРИВАТНЫЕ МЕТОДЫ */
     // Метод проверки правильности цены блюда.
+    @Deprecated
     private void checkCost(double cost) throws IncorrectCostException{
            if (cost < 0) throw new IncorrectCostException();
     }
@@ -83,6 +89,20 @@ public class Dish implements Serializable{
         hash = 53 * hash + (int) (Double.doubleToLongBits(this.price) ^ (Double.doubleToLongBits(this.price) >>> 32));
         hash = 53 * hash + this.id;
         return hash;
+    }
+    
+    /**
+     * 
+     * @return
+     * @throws CloneNotSupportedException 
+     */
+    @Override
+    public Dish clone() throws CloneNotSupportedException{
+       Dish d = (Dish) super.clone();
+       d.id=this.id;
+       d.name=this.name;
+       d.price=this.price;
+       return d;
     }
 
 }

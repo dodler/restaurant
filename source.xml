@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list>
+    <category id="100000" name="tst">
+        <dish id="2" name="a" price="12" />
+        <dish id="3" name="s" price="22" />
+    </category>
+    <category id="100001" name="test2">
+    </category>
+    <category id="100002" name="cat3">
+        <dish id="6" name="dish3" price="222" />
+    </category>
+</list>

@@ -201,7 +201,7 @@ public class ModelControllerImpl implements IModelController {
             @Override
             public void onDishFound() {
                 if (d.getPrice() > price) {
-                    view.show(d);
+                    //view.show(d);
                 }
             }
         };
@@ -214,7 +214,7 @@ public class ModelControllerImpl implements IModelController {
             @Override
             public void onDishFound() {
                 if (d.getPrice() < price) {
-                    view.show(d);
+                    //view.show(d);
                 }
             }
         };
@@ -227,7 +227,7 @@ public class ModelControllerImpl implements IModelController {
             @Override
             public void onDishFound() {
                 if (d.getPrice() == price) {
-                    view.show(d);
+                    //view.show(d);
                 }
             }
         };
@@ -240,7 +240,7 @@ public class ModelControllerImpl implements IModelController {
             @Override
             public void onDishFound() {
                 if (d.getPrice() > left && d.getPrice() < right) {
-                    view.show(d);
+                    //view.show(d);
                 }
             }
         };
@@ -267,7 +267,7 @@ public class ModelControllerImpl implements IModelController {
                     }
                 }
                 if (found == words.length) {
-                    view.show(d);
+                    //view.show(d);
                 }
 
             }
