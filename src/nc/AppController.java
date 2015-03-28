@@ -16,17 +16,12 @@ import java.util.ArrayList;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultRowSorter;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.RowSorter;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.xml.parsers.ParserConfigurationException;
 import model.CategoryImpl;
@@ -297,11 +292,19 @@ public class AppController {
                         }
 
                         if (!((JTextField) ((SwingView) view).getLoader().getComponent("findPriceMore")).getText().equals("")) {
-                            lowPrice = Double.parseDouble(((JTextField) ((SwingView) view).getLoader().getComponent("findPriceMore")).getText());
+                            try {
+                                lowPrice = Double.parseDouble(((JTextField) ((SwingView) view).getLoader().getComponent("findPriceMore")).getText());
+                            } catch (NumberFormatException nfe) {
+                                JOptionPane.showMessageDialog(loader.getComponent("main"), "Ошибка при вводе цены");
+                            }
                         }
 
                         if (!((JTextField) ((SwingView) view).getLoader().getComponent("findPriceLess")).getText().equals("")) {
-                            highPrice = Double.parseDouble(((JTextField) ((SwingView) view).getLoader().getComponent("findPriceLess")).getText());
+                            try {
+                                highPrice = Double.parseDouble(((JTextField) ((SwingView) view).getLoader().getComponent("findPriceLess")).getText());
+                            } catch (NumberFormatException nfe) {
+                                JOptionPane.showMessageDialog(loader.getComponent("main"), "Ошибка при вводе цены");
+                            }
                         }
 
                     } catch (NoSuchElementException ex) {
@@ -398,7 +401,7 @@ public class AppController {
                 @Override
                 public void mouseClicked(MouseEvent me) {
                     try {
-                        ((NetModelImpl) mdl).load();
+                        ((NetModelImpl) model).load();
                         ((SwingView) view).updateTable();
 
                     } catch (IOException | ClassNotFoundException ex) {
@@ -435,7 +438,7 @@ public class AppController {
                 public void mouseClicked(MouseEvent me) {
                     Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, "onSave");
                     try {
-                        ((NetModelImpl) mdl).save();
+                        ((NetModelImpl) model).save();
                     } catch (IOException ex) {
                         Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
                     }

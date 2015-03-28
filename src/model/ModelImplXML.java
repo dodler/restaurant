@@ -34,6 +34,17 @@ public class ModelImplXML implements IModel, Serializable {
     private CopyOnWriteArrayList<ICategory> cats;
     private ICategory rootCategory;
 
+    public ModelImplXML(ArrayList<ICategory> categoryList) {
+        this.cats = new CopyOnWriteArrayList<>();
+        for (ICategory c : categoryList) {
+            cats.add(c);
+        }
+    }
+
+    public ModelImplXML() {
+        this.cats = new CopyOnWriteArrayList<>();
+    }
+
     //TODO: нужно сделать сериализацию, и рут категорию
     @Deprecated
     @Override
@@ -43,8 +54,32 @@ public class ModelImplXML implements IModel, Serializable {
 
     @Override
     public void save(String name) throws IOException {
-        BufferedReader br;
-        br = new BufferedReader(new FileReader(name));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(name));
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<list>\n");
+        for (ICategory c : cats) {
+            //<category id="100000" name="tst">
+            //<dish id="2" name="a" price="12" />
+            sb.append("\t<category id=\"");
+            sb.append(c.getId());
+            sb.append("\" name=\"");
+            sb.append(c.getName());
+            sb.append("\">\n");
+            for (Dish d : c.getDishList()) {
+                sb.append("\t\t<dish id=\"");
+                sb.append(d.getId());
+                sb.append("\" name=\"");
+                sb.append(d.getName());
+                sb.append("\" price=\"");
+                sb.append(d.getPrice());
+                sb.append("\" /> \n");
+            }
+            sb.append("\t</category>\n");
+        }
+        sb.append("</list>");
+        writer.write(sb.toString());
+        writer.flush();
+        writer.close();
 
     }
 
@@ -58,10 +93,10 @@ public class ModelImplXML implements IModel, Serializable {
         throw new UnsupportedOperationException("Не работает для сервера");
     }
 
-    public CopyOnWriteArrayList<ICategory> getCategoryLst(){
+    public CopyOnWriteArrayList<ICategory> getCategoryLst() {
         return this.cats;
     }
-    
+
     /**
      * загрузка файла данных из xml в xml данные хранятся в формате
      * последовательного списка со влжоенными блюдами
@@ -112,16 +147,21 @@ public class ModelImplXML implements IModel, Serializable {
             }
             cats.add(c);
         }
+        Logger.getLogger(ModelImplXML.class.getName()).log(Level.SEVERE, "Загружено из файла:");
+        Logger.getLogger(ModelImplXML.class.getName()).log(Level.SEVERE, String.valueOf(cats.size()) + " категорий");
     }
-    
-    public void updateModel(ArrayList<ICategory> cats){
+
+    public void updateModel(ArrayList<ICategory> cats) {
         Logger.getLogger(ModelImplXML.class.getName()).log(Level.SEVERE, "Вход в метод обновления");
         Logger.getLogger(ModelImplXML.class.getName()).log(Level.SEVERE, String.valueOf(cats.size()));
+
         this.cats.clear();
+
         Logger.getLogger(ModelImplXML.class.getName()).log(Level.SEVERE, "Текущие категории очищены");
-        for(ICategory c:cats){
-            this.cats.add(c);
+        for (ICategory c : cats) {
+            this.cats.add(new CategoryImpl(c.getName(), c.getId()));
         }
+
         Logger.getLogger(ModelImplXML.class.getName()).log(Level.SEVERE, "Новые данные записаны в модель");
     }
 

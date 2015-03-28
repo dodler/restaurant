@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -29,12 +27,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import model.net.Request;
-import nc.AppController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import ui.NoSuchElementException;
-import view.SwingView;
 
 /**
  * класс для загрузки модели с сервера также имплементирует IModel как
@@ -68,7 +63,7 @@ public class NetModelImpl implements IModel, Serializable {
         this.cats = new ArrayList<>();
         connect(ip, port);
     }
-
+    
     /**
      * при помощи этого метода производится подключение к серверу приложения
      * создаются нужные каналы на считывание и запись данных
@@ -163,7 +158,9 @@ public class NetModelImpl implements IModel, Serializable {
      * @throws java.io.IOException ошибка записи модели на сервер
      */
     public void save() throws IOException {
-        Request req = new Request(this, Request.POST);
+        NetModelImpl mod = new NetModelImpl();
+        mod.cats = this.cats;
+        Request req = new Request(mod, Request.POST);
         oos.writeObject(req);
         oos.flush();
         fixed = true;
